@@ -1,0 +1,39 @@
+{{- define "stylesheets" -}}
+{{- end -}}
+
+{{- define "content" -}}
+    <div id="link"></div>
+    <form method="post" action="./" name="paste">
+        <div class="form-item">
+            <label for="max_time">Expire dans</label>
+            <select name="max_time" id="max_time" required>
+                {{- range .AllowedTimes -}}
+                <option value="{{.DurationString}}" {{if eq .Default true}}selected="selected"{{end}}>{{.Label}}</option>
+                {{- end -}}
+            </select>
+        </div>
+        <div class="form-item">
+            <label for="type">Format</label>
+            <select name="type" id="type" required>
+                {{- range .AllowedTypes -}}
+                <option value="{{.}}">{{.}}</option>
+                {{- end -}}
+            </select>
+        </div>
+        <div class="form-item">
+            <label for="max_read">Nombre de lecture maximum</label>
+            <input type="number" value="1" name="max_read" id="max_read" min="0" max="500" required>
+        </div>
+        <div class="form-item form-paste">
+            <label for="paste">Contenu</label>
+            <textarea name="paste" id="paste" required></textarea>
+        </div>
+        <div class="form-item form-action">
+            <button type="submit">Enregistrer</button>
+        </div>
+    </form>
+{{- end -}}
+
+{{- define "javascripts" -}}
+    <script src="/static/js/app.js" type="module"></script>
+{{- end -}}

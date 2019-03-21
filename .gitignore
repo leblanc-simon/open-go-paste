@@ -1,0 +1,4 @@
+/datas/*
+!/datas/.gitkeep
+/node_modules
+/server/open-go-paste

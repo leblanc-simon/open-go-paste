@@ -1,0 +1,172 @@
+/* titillium-web-regular - latin_latin-ext */
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Titillium Web Regular'), local('TitilliumWeb-Regular'),
+       url('../fonts/titillium-web-v7-latin_latin-ext-regular.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('../fonts/titillium-web-v7-latin_latin-ext-regular.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* titillium-web-700 - latin_latin-ext */
+@font-face {
+  font-family: 'Titillium Web';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Titillium Web Bold'), local('TitilliumWeb-Bold'),
+       url('../fonts/titillium-web-v7-latin_latin-ext-700.woff2') format('woff2'), /* Chrome 26+, Opera 23+, Firefox 39+ */
+       url('../fonts/titillium-web-v7-latin_latin-ext-700.woff') format('woff'); /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+:root {
+    --primary-action-background-color: green;
+    --primary-action-text-color: #fff;
+    --secondary-background-color: #666;
+    --secondary-background-gradiant: linear-gradient(#ccc, #aaa);
+    --secondary-text-color: #333;
+    --default-margin-top: 1rem;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    font-family: 'Titillium Web', sans-serif;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+header {
+    color: var(--secondary-text-color);
+    background: var(--secondary-background-gradiant);
+    background-color: var(--secondary-background-color);
+    box-shadow: 1px 1px 5px 1px var(--secondary-background-color);
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    margin-top: var(--default-margin-top);
+    padding: 0 5%;
+    flex: 1;
+}
+
+#link {
+    position: absolute;
+    left: -100%;
+    visibility: hidden;
+    opacity: 0;
+
+    padding: 1rem;
+    margin-bottom: var(--default-margin-top);
+    color: var(--primary-action-text-color);
+    background-color: var(--primary-action-background-color);
+    transition: all 1s linear;
+    border-radius: 0.5rem;
+    border: 1px solid var(--primary-action-background-color);
+    text-align: center;
+}
+
+#link a, #link a:hover, #link a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+#link a:hover {
+    text-decoration: underline;
+}
+
+#link.show {
+    position: relative;
+    visibility: visible;
+    opacity: 1;
+    left: unset;
+}
+
+form {
+    display: flex;
+    flex: 1 0 auto;
+    flex-wrap: wrap;
+}
+
+.form-item {
+    display: flex;
+    width: calc((100% / 3) - (2rem / 3));
+    margin: 0;
+    align-items: center;
+}
+
+.form-item:nth-child(2) {
+    margin: 0 1rem;
+}
+
+.form-item label {
+    margin-right: 1rem;
+}
+
+.form-item input, .form-item select {
+    flex: 2;
+    height: 2rem;
+}
+
+.form-paste {
+    flex-direction: column;
+    align-items: unset;
+    width: 100vw;
+    height: 50vh;
+    min-height: 300px;
+    margin-top: var(--default-margin-top);
+}
+.form-paste textarea {
+    height: 100%;
+}
+
+.form-action {
+    align-items: unset;
+    justify-content: right;
+    width: 100vw;
+    margin-top: var(--default-margin-top);
+}
+
+button {
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.2rem;
+    border: 0;
+    color: var(--primary-action-text-color);
+    background-color: var(--primary-action-background-color);
+}
+
+#paste-content {
+    white-space: pre;
+    padding: 0.5rem;
+    border-radius: 0.2rem;
+}
+
+#paste-content:not(.hljs) {
+    background: #eee;
+}
+
+#paste-content.markdown {
+    white-space: normal;
+}
+
+.markdown h1, .markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6, .markdown p {
+    margin: 0.5rem 0
+}
+
+footer {
+    padding: 1%;
+    margin-top: var(--default-margin-top);
+    font-size: 0.8rem;
+    color: var(--secondary-text-color);
+    background: var(--secondary-background-gradiant);
+    background-color: var(--secondary-background-color);
+}

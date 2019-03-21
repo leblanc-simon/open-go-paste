@@ -1,0 +1,29 @@
+{{- define "layout" -}}
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>Open Go Paste</title>
+        <meta name="robots" content="noindex">
+        <meta name="referrer" content="no-referrer">
+        {{- template "stylesheets" . -}}
+        <link rel="stylesheet" href="/static/css/app.css">
+    </head>
+    <body>
+        <header>
+            <h1>OpenGoPaste</h1>
+            <summary>Comme le GoFast, il est préférable d'être caché !</summary>
+        </header>
+        <main>
+            {{- template "content" . -}}
+        </main>
+        <footer>
+            OpenGoPaste est un service de gestionnaire d'extraits de texte et de code source.
+            Les données envoyées par ce service ne sont connues que par vous seul et le(s)
+            destinataire(s) du lien car elles sont chiffrées et déchiffrées par le navigateur.
+            À aucun moment le service ne connait les données qui sont envoyées.
+        </footer>
+        {{- template "javascripts" . -}}
+    </body>
+</html>
+{{- end -}}

@@ -1,0 +1,24 @@
+{{- define "stylesheets" -}}
+    {{- if or (eq .Type "code") (eq .Type "markdown") -}}
+    <link rel="stylesheet" href="/static/css/highlightjs/androidstudio.css" />
+    {{- end -}}
+{{- end -}}
+
+{{- define "content" -}}
+    <div id="paste-content"></div>
+{{- end -}}
+
+{{- define "javascripts" -}}
+    <script>
+        const encryptedValue = "{{.Data}}";
+        const isCode = {{if eq .Type "code"}}true{{else}}false{{end}};
+        const isMarkdown = {{if eq .Type "markdown"}}true{{else}}false{{end}};
+    </script>
+    {{- if or (eq .Type "code") (eq .Type "markdown") -}}
+    <script src="/static/js/highlight.pack.js"></script>
+    {{- end -}}
+    {{- if eq .Type "markdown" -}}
+    <script src="/static/js/showdown.min.js"></script>
+    {{- end -}}
+    <script src="/static/js/app.js" type="module"></script>
+{{- end -}}
