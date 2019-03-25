@@ -36,7 +36,7 @@ function encode(e){return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0
                     }).then(text => {
                         const counterPass = crypto.getPasswordAndCounter();
                         const linkDiv = document.getElementById('link');
-                        linkDiv.innerHTML = `
+                        linkDiv.querySelector('.link').innerHTML = `
                             <a href="/p/${text}#${counterPass}">
                                 ${form.action}p/${text}#${counterPass}
                             </a>
@@ -52,6 +52,24 @@ function encode(e){return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0
 
             return false;
         }, false);
+
+        document.getElementById('copy-link').addEventListener('click', event => {
+            const copyToClipboard = str => {
+                const el = document.createElement('textarea');
+                el.value = str;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                const copyLinkElement = event.currentTarget;
+                copyLinkElement.classList.add('copied');
+                setTimeout(() => {
+                    copyLinkElement.classList.remove('copied');
+                }, 3000);
+            };
+
+            copyToClipboard(document.querySelector('#link .link a').innerText);
+        });
     }
 
     if (pasteContent && encryptedValue) {

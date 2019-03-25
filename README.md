@@ -29,3 +29,4 @@ All options are managed by environment variables.
 ## Thanks
 * https://highlightjs.org/
 * https://github.com/showdownjs/showdown
+* https://ionicons.com/ (Copy icon is licensed under MIT)

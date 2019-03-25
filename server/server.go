@@ -2,8 +2,8 @@ package main
 
 import (
     "bytes"
-	"log"
-	"net/http"
+    "log"
+    "net/http"
     "os"
 
     "github.com/gorilla/mux"
@@ -42,5 +42,5 @@ func RunServer(r *mux.Router) {
     assetsDelivery(r)
 
     log.Printf("Running server %s", server.String())
-	http.ListenAndServe(server.String(), r)
+    http.ListenAndServe(server.String(), r)
 }

@@ -1,36 +1,32 @@
 let _key = null;
 
-const keyAlgorythm = 'AES-CTR';
-const keyImportAlgorythm = 'A256CTR';
+const keyAlgorithm = 'AES-CBC';
+const randomValuesSize = 16; // Must be 16 for AES-CTR, AES-CBC and 12 for AES-GCM
 const keyLength = 256;
-const cryptLength = 128;
 
 export default class Crypto {
     constructor() {
-        this.password = null;
+        this.jwk = null;
         this.counter = null;
         if (window.location.hash) {
             const splitHash = window.location.hash.substring(1).split('|');
-            this.counter = new ArrayBuffer(16);
+            this.counter = new ArrayBuffer(randomValuesSize);
             const counterDatas = splitHash.shift().split(',');
             let bufferView = new Uint8Array(this.counter);
             counterDatas.forEach((counterData, index) => {
                 bufferView[index] = counterData;
             })
-            this.password = splitHash.join('|');
+            this.jwk = JSON.parse(atob(splitHash.join('|')));
         }
     }
 
     async encrypt(data) {
-        const counter = window.crypto.getRandomValues(new Uint8Array(16));
+        const counter = window.crypto.getRandomValues(new Uint8Array(randomValuesSize));
         this.counter = counter;
         const key = await this.key;
         return new Promise(function (resolve, reject) {
-            window.crypto.subtle.encrypt({
-                    name: keyAlgorythm,
-                    counter: counter,
-                    length: cryptLength,
-                },
+            window.crypto.subtle.encrypt(
+                Crypto.getEncryptDecryptOptions(counter),
                 key,
                 Crypto.str2ab(data)
             ).then(function(encrypted){
@@ -44,11 +40,8 @@ export default class Crypto {
         const key = await this.key;
         const counter = this.counter;
         return new Promise(function (resolve, reject) {
-            window.crypto.subtle.decrypt({
-                    name: keyAlgorythm,
-                    counter: counter,
-                    length: cryptLength,
-                },
+            window.crypto.subtle.decrypt(
+                Crypto.getEncryptDecryptOptions(counter),
                 key,
                 Crypto.Uint8ArrayToBuffer(data)
             ).then(function(decrypted){
@@ -66,7 +59,7 @@ export default class Crypto {
                 return;
             }
 
-            if (that.password) {
+            if (that.jwk) {
                 that.generateKeyFromPassword().then(key => {
                     resolve(key);
                 });
@@ -83,21 +76,15 @@ export default class Crypto {
     }
 
     getPasswordAndCounter() {
-        return this.counter.join(',') + '|' + this.password;
+        return this.counter.join(',') + '|' + this.jwk;
     }
 
     generateKeyFromPassword() {
         return window.crypto.subtle.importKey(
             'jwk',
+            this.jwk,
             {
-                alg: 'A256CTR',
-                ext: true,
-                k: this.password,
-                key_opts: ['encrypt', 'decrypt'],
-                kty: 'oct',
-            },
-            {
-                name: keyAlgorythm,
+                name: keyAlgorithm,
             },
             true,
             ['encrypt', 'decrypt']
@@ -109,7 +96,7 @@ export default class Crypto {
         return new Promise(function (resolve, reject) {
             window.crypto.subtle.generateKey(
                 {
-                    name: keyAlgorythm,
+                    name: keyAlgorithm,
                     length: keyLength,
                 },
                 true,
@@ -119,12 +106,33 @@ export default class Crypto {
                 window.crypto.subtle
                     .exportKey('jwk', key)
                     .then(function (keydata) {
-                        that.password = keydata.k;
+                        that.jwk = btoa(JSON.stringify(keydata));
                         resolve(key);
                     })
                     .catch(reject)
             }).catch(reject);
         });
+    }
+
+    static getEncryptDecryptOptions(iv) {
+        switch (keyAlgorithm) {
+            case 'AES-CTR':
+                return {
+                    name: 'AES-CTR',
+                    counter: iv,
+                    length: 128,
+                };
+            case 'AES-CBC':
+                return {
+                    name: 'AES-CBC',
+                    iv: iv,
+                }
+            case 'AES-GCM':
+                return {
+                    name: 'AES-GCM',
+                    iv: iv,
+                }
+        }
     }
 
     static support() {
