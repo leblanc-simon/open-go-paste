@@ -3,6 +3,14 @@ import Crypto from './crypto.js';
 function encode(e){return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0)+";"})}
 
 (() => {
+    if (false === Crypto.support()) {
+        document.querySelector('main').innerHTML = `
+        <p>Your browser is not compatible with OpenGoPaste. Change your browser or cry :)</p>
+        `;
+
+        return;
+    }
+
     const crypto = new Crypto();
 
     const form = document.querySelector('form[name="paste"]');

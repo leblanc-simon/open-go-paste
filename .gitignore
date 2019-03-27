@@ -1,4 +1,5 @@
 /assets/css/custom.css
+/assets/js/app-bundle.js
 /datas/*
 !/datas/.gitkeep
 /node_modules

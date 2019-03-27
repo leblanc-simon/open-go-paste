@@ -1,0 +1,66 @@
+ @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    /*
+    :root {
+        --primary-action-background-color: green;
+        --primary-action-text-color: #fff;
+        --secondary-background-color: #666;
+        --secondary-background-gradiant: linear-gradient(#ccc, #aaa);
+        --secondary-text-color: #333;
+        --default-margin-top: 1rem;
+    }
+    */
+
+    header {
+        color: #333 /* var(--secondary-text-color) */;
+        background: linear-gradient(#ccc, #aaa) /* var(--secondary-background-gradiant) */;
+        background-color: #666 /* var(--secondary-background-color) */;
+        box-shadow: 1px 1px 5px 1px #666 /* var(--secondary-background-color) */;
+    }
+
+    main {
+        margin-top: 1rem /* var(--default-margin-top) */;
+    }
+
+    #link {
+        margin-bottom: 1rem /* var(--default-margin-top) */;
+        color: #fff /* var(--primary-action-text-color) */;
+        background-color: green /* var(--primary-action-background-color) */;
+        border: 1px solid green /* var(--primary-action-background-color) */;
+    }
+
+    #link .title {
+        margin-bottom: 1rem /* var(--default-margin-top) */;
+    }
+
+    #link .link {
+        width: calc(100% - 35px - 1rem) /* var(--default-margin-top) */;
+    }
+
+    #copy-link {
+        margin-left: 1rem /* var(--default-margin-top) */;
+    }
+
+    #copy-link svg {
+        fill: #fff /* var(--primary-action-text-color) */;
+    }
+
+    .form-paste {
+        margin-top: 1rem /* var(--default-margin-top) */;
+    }
+
+    .form-action {
+        margin-top: 1rem /* var(--default-margin-top) */;
+    }
+
+    button {
+        color: #fff /* var(--primary-action-text-color) */;
+        background-color: green /* var(--primary-action-background-color) */;
+    }
+
+    footer {
+        margin-top: 1rem /* var(--default-margin-top) */;
+        color: #333 /* var(--secondary-text-color) */;
+        background: linear-gradient(#ccc, #aaa) /* var(--secondary-background-gradiant) */;
+        background-color: #666 /* var(--secondary-background-color) */;
+    }
+}
