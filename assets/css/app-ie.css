@@ -1,7 +1,7 @@
  @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
     /*
     :root {
-        --primary-action-background-color: green;
+        --primary-action-background-color: #662d91;
         --primary-action-text-color: #fff;
         --secondary-background-color: #666;
         --secondary-background-gradiant: linear-gradient(#ccc, #aaa);
@@ -21,11 +21,15 @@
         margin-top: 1rem /* var(--default-margin-top) */;
     }
 
-    #link {
+    #link, .paste-information {
         margin-bottom: 1rem /* var(--default-margin-top) */;
         color: #fff /* var(--primary-action-text-color) */;
-        background-color: green /* var(--primary-action-background-color) */;
-        border: 1px solid green /* var(--primary-action-background-color) */;
+        background-color: #662d91 /* var(--primary-action-background-color) */;
+        border: 1px solid #662d91 /* var(--primary-action-background-color) */;
+    }
+
+    .show#link, .show.paste-information {
+        left: 0;
     }
 
     #link .title {
@@ -46,6 +50,11 @@
 
     .form-paste {
         margin-top: 1rem /* var(--default-margin-top) */;
+        align-items: flex-start;
+    }
+
+    .form-paste textarea {
+        width: 100%
     }
 
     .form-action {
@@ -54,7 +63,7 @@
 
     button {
         color: #fff /* var(--primary-action-text-color) */;
-        background-color: green /* var(--primary-action-background-color) */;
+        background-color: #662d91 /* var(--primary-action-background-color) */;
     }
 
     footer {
