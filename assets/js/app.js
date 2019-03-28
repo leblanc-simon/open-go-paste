@@ -94,5 +94,29 @@ function encode(e){return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0
                 console.error(error);
             })
         ;
+
+        const pasteInformation = document.querySelector('.paste-information');
+        if (pasteInformation) {
+            const nbAvailableRead = nbOfReadAllowed - nbOfRead;
+            const expireDate = new Date(
+                Date.parse(
+                    expireTime.replace(
+                        /^([0-9-]+)( )([0-9:\.]+)( )([\+-][0-9]{2})([0-9]{2})(.*)$/,
+                        '$1T$3$5:$6'
+                    )
+                )
+            );
+            const currentDate = new Date();
+
+            if (expireDate < currentDate || 0 === nbAvailableRead) {
+                pasteInformation.innerHTML = pasteInformation.getAttribute('data-last-read');
+            } else {
+                let message = pasteInformation.getAttribute('data-information');
+                message = message.replace('{nbAvailableRead}', nbAvailableRead);
+                message = message.replace('{dateAvailable}', expireDate.toLocaleDateString());
+                message = message.replace('{hourAvailable}', expireDate.toLocaleTimeString());
+                pasteInformation.innerHTML = message;
+            }
+        }
     }
 })();

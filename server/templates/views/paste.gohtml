@@ -5,12 +5,19 @@
 {{- end -}}
 
 {{- define "content" -}}
+    <div class="paste-information show"
+        data-information="Ce message pourra être consulté encore {nbAvailableRead} fois ou jusqu'au {dateAvailable} à {hourAvailable}."
+        data-last-read="Ce message est disponible pour la dernière fois. Vous ne pourrez plus le consulter par la suite."
+    ></div>
     <div id="paste-content"></div>
 {{- end -}}
 
 {{- define "javascripts" -}}
     <script>
         const encryptedValue = "{{.Data}}";
+        const nbOfReadAllowed = {{.AllowedNumberOfRead}};
+        const nbOfRead = {{.NumberOfRead}};
+        const expireTime = "{{.ExpireTime}}";
         const isCode = {{if eq .Type "code"}}true{{else}}false{{end}};
         const isMarkdown = {{if eq .Type "markdown"}}true{{else}}false{{end}};
     </script>

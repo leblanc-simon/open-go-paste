@@ -21,7 +21,7 @@
 }
 
 :root {
-    --primary-action-background-color: green;
+    --primary-action-background-color: #662d91;
     --primary-action-text-color: #fff;
     --secondary-background-color: #666;
     --secondary-background-gradiant: linear-gradient(#ccc, #aaa);
@@ -43,11 +43,16 @@ body {
 }
 
 header {
-    padding: 0 0.5rem;
+    display: flex;
+    padding: 0.5rem;
     color: var(--secondary-text-color);
     background: var(--secondary-background-gradiant);
     background-color: var(--secondary-background-color);
     box-shadow: 1px 1px 5px 1px var(--secondary-background-color);
+}
+
+header .logo {
+    margin-right: 1rem
 }
 
 h1 {
@@ -60,7 +65,7 @@ main {
     flex: 1;
 }
 
-#link {
+#link, .paste-information {
     display: flex;
     flex-wrap: wrap;
     position: absolute;
@@ -86,7 +91,7 @@ main {
     text-decoration: underline;
 }
 
-#link.show {
+#link.show, .paste-information.show {
     position: relative;
     visibility: visible;
     opacity: 1;
@@ -181,6 +186,10 @@ button {
     border: 0;
     color: var(--primary-action-text-color);
     background-color: var(--primary-action-background-color);
+}
+
+.paste-information {
+    font-weight: bold;
 }
 
 #paste-content {

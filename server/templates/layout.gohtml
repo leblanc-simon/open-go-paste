@@ -3,17 +3,31 @@
 <html lang="fr" dir="ltr">
     <head>
         <meta charset="utf-8">
-        <title>Open Go Paste</title>
+        <title>OpenGoPaste</title>
         <meta name="robots" content="noindex">
         <meta name="referrer" content="no-referrer">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <link rel="apple-touch-icon" sizes="180x180" href="/static/img/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="/static/img/favicon/favicon-16x16.png">
+        <link rel="manifest" href="/static/img/favicon/site.webmanifest">
+        <link rel="mask-icon" href="/static/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+        <link rel="shortcut icon" href="/static/img/favicon/favicon.ico">
+        <meta name="msapplication-TileColor" content="#da532c">
+        <meta name="msapplication-config" content="/static/img/favicon/browserconfig.xml">
+        <meta name="theme-color" content="#ffffff">
         {{- template "stylesheets" . -}}
         <link rel="stylesheet" href="/static/css/app.css">
     </head>
     <body>
         <header>
-            <h1>OpenGoPaste</h1>
-            <summary>Comme pour le GoFast, il est préférable d'être caché !</summary>
+            <div class="logo">
+                <img width="76" height="76" src="/static/img/logo-76.png" />
+            </div>
+            <div class="title">
+                <h1>OpenGoPaste</h1>
+                <summary>Comme pour le GoFast, il est préférable d'être caché !</summary>
+            </div>
         </header>
         <main>
             {{- template "content" . -}}
