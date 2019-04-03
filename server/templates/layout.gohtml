@@ -15,17 +15,19 @@
         <link rel="shortcut icon" href="/static/img/favicon/favicon.ico">
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="msapplication-config" content="/static/img/favicon/browserconfig.xml">
-        <meta name="theme-color" content="#ffffff">
+        <meta name="theme-color" content="#662d91">
         {{- template "stylesheets" . -}}
         <link rel="stylesheet" href="/static/css/app.css">
     </head>
     <body>
         <header>
             <div class="logo">
-                <img width="76" height="76" src="/static/img/logo-76.png" />
+                <a href="/" title="Créez un nouveau paste">
+                    <img width="76" height="76" src="/static/img/logo-76.png" />
+                </a>
             </div>
             <div class="title">
-                <h1>OpenGoPaste</h1>
+                <h1>OpenGo<span class="title">Paste</span></h1>
                 <summary>Comme pour le GoFast, il est préférable d'être caché !</summary>
             </div>
         </header>

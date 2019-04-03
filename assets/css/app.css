@@ -59,6 +59,10 @@ h1 {
     margin: 0;
 }
 
+h1 .title {
+    color: var(--primary-action-background-color);
+}
+
 main {
     margin-top: var(--default-margin-top);
     padding: 0 5%;
@@ -154,11 +158,32 @@ form {
 
 .form-item label {
     margin-right: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
 }
 
 .form-item input, .form-item select {
     flex: 2;
     height: 2rem;
+}
+
+.form-item input, .form-item select, .form-item textarea {
+    outline: none;
+    border: 1px solid #ddd;
+    font-family: 'Titillium Web', sans-serif;
+    font-size: 1.1rem;
+}
+
+.form-item input:focus, .form-item select:focus, .form-item textarea:focus {
+    border-color: var(--primary-action-background-color);
+}
+
+.form-item input, .form-item textarea {
+    padding: 0.3rem;
+}
+
+.form-item input {
+    height: 1.4rem;
 }
 
 .form-paste {
@@ -186,6 +211,9 @@ button {
     border: 0;
     color: var(--primary-action-text-color);
     background-color: var(--primary-action-background-color);
+    font-size: 1.1rem;
+    font-family: 'Titillium Web', sans-serif;
+    font-weight: bold;
 }
 
 .paste-information {

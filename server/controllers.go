@@ -34,11 +34,18 @@ func IndexController(w http.ResponseWriter, r *http.Request) {
     index.Render(w, IndexData{AllowedTimes: maxTime.GetAllowed(), AllowedTypes: pasteType.GetAllowed()})
 }
 
+func IsValidUserAgent(r *http.Request) bool {
+    userAgent := r.UserAgent()
+    match, _ := regexp.MatchString("^Mozilla/", userAgent)
+
+    return match
+}
+
 func GetPasteController(w http.ResponseWriter, r *http.Request) {
     vars := mux.Vars(r)
     pasteId := vars["pasteId"]
 
-    pasteJson, err := ReadPaste(pasteId)
+    pasteJson, err := ReadPaste(pasteId, IsValidUserAgent(r))
 
     if (nil != err) {
         http.Error(w, "this paste is not found", http.StatusNotFound)

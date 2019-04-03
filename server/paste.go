@@ -184,7 +184,7 @@ func CreatePaste(data string, pasteType string, finishTime string, numberOfRead 
     return paste.Id, nil
 }
 
-func ReadPaste(id string) (Paste, error) {
+func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
     var paste Paste
 
     if (false == isPasteFileExist(id)) {
@@ -200,7 +200,10 @@ func ReadPaste(id string) (Paste, error) {
 
     json.Unmarshal(pasteJson, &paste)
 
-    paste.NumberOfRead = paste.NumberOfRead + 1
+    if (true == isValidUserAgent) {
+        // Increment number of read only if we have a valid user-agent
+        paste.NumberOfRead = paste.NumberOfRead + 1
+    }
 
     deleteIfNecessary(paste, pasteFilename)
 
