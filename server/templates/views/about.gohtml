@@ -1,0 +1,53 @@
+{{- define "stylesheets" -}}
+<link rel="stylesheet" href="/static/css/about.css">
+{{- end -}}
+
+{{- define "content" -}}
+    <div id="about">
+        <div class="logos">
+            <div class="logo"><img src="/static/img/logo-350.png" /></div>
+            <div class="logo"><img src="/static/img/logo2-350.png" /></div>
+        </div>
+        <p class="description">
+            OpenGoPaste est un logiciel libre permettant mettre en ligne de manière sécurisé
+            des notes, du code ou des textes afin de les partager.
+        </p>
+        <p class="description">
+            L'ensemble des textes ajoutés via OpenGoPaste sont chiffrés en AES 256
+            par le navigateur avant d'être envoyés au serveur afin que seul l'auteur
+            de ces lignes et le ou les destinataires ne puissent accéder au contenu.
+        </p>
+        <div class="authors">
+            OpenGoPaste a été réalisé par :
+            <div class="author dev" data-content="Développement et design">Simon Leblanc</div>
+            <div class="author design" data-content="Icône et logo">Lucie Lenfant</div>
+        </div>
+        <div class="open-source">
+            <p>
+                OpenGoPaste est un logiciel libre.
+                <ul>
+                    <li>Le code est sous licence <a href="http://www.wtfpl.net/">WTFPL</a>.</li>
+                    <li>Les logos sont sous licence <a href="http://artlibre.org/">Art Libre</a>.</li>
+                </ul>
+            </p>
+            <ul>
+                <li><a class="link" href="https://github.com/leblanc-simon/open-go-paste"
+                        title="Voir le code source">Code source du logiciel</a>
+                </li>
+                <li><a class="link" href="/static/img/logo.svg"
+                        title="Voir le code source">Source du logo officiel</a>
+                </li>
+                <li><a class="link" href="/static/img/logo2.svg"
+                        title="Voir le code source">Source du logo officieux</a>
+                        (œuvre dérivée d'une <a
+                        href="http://hpfteam.free.fr/ressources/framartlibre/framashirt-logo_mouton.tar.gz"
+                        title="Télécharger l'œuvre originelle"
+                        >création originale</a> d'<a href="http://hpfteam.free.fr/graphisme-libre/">harrypopof</a>,
+                         modifié par Simon Leblanc et enfin repris par Lucie Lenfant)
+                </li>
+        </div>
+    </div>
+{{- end -}}
+
+{{- define "javascripts" -}}
+{{- end -}}

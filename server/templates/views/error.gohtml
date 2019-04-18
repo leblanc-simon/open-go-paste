@@ -1,0 +1,14 @@
+{{- define "stylesheets" -}}
+<link rel="stylesheet" href="/static/css/error.css">
+{{- end -}}
+
+{{define "content"}}
+<div id="error">
+    <h1 class="title">{{.Title}}</h1>
+    <div class="message">{{.Message}}</div>
+    <div class="logo"><img src="/static/img/logo2-350.png" /></div>
+</div>
+{{end}}
+
+{{- define "javascripts" -}}
+{{- end -}}

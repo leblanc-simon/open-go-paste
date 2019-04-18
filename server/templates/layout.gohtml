@@ -16,8 +16,9 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="msapplication-config" content="/static/img/favicon/browserconfig.xml">
         <meta name="theme-color" content="#662d91">
-        {{- template "stylesheets" . -}}
+        <link rel="prefetch" href="/static/css/color.css">
         <link rel="stylesheet" href="/static/css/app.css">
+        {{- template "stylesheets" . -}}
     </head>
     <body>
         <header>
@@ -35,7 +36,7 @@
             {{- template "content" . -}}
         </main>
         <footer>
-            <a href="https://github.com/leblanc-simon/open-go-paste">OpenGoPaste</a> est un service de gestionnaire d'extraits de texte et de code source.
+            <a href="/about">OpenGoPaste</a> est un service de gestionnaire d'extraits de texte et de code source.
             Les données envoyées par ce service ne sont connues que par vous seul et le(s)
             destinataire(s) du lien car elles sont chiffrées et déchiffrées par le navigateur.
             À aucun moment le service ne connait les données qui sont envoyées.

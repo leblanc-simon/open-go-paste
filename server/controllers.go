@@ -9,18 +9,44 @@ import (
     "github.com/gorilla/mux"
 )
 
-var notFound *View
+var errorView *View
+var about *View
 var index *View
 var paste *View
 
 func InitTemplateViews() {
-    notFound = NewView("layout", "templates/views/404.gohtml")
+    errorView = NewView("layout", "templates/views/error.gohtml")
+    about = NewView("layout", "templates/views/about.gohtml")
     index = NewView("layout", "templates/views/index.gohtml")
     paste = NewView("layout", "templates/views/paste.gohtml")
 }
 
+type ErrorData struct {
+    Title string
+    Message string
+}
+func ErrorHandler(w http.ResponseWriter, error string, code int) {
+    var errorData ErrorData
+    errorData.Message = error
+
+    if (400 == code) {
+        errorData.Title = "400 Bad Request"
+    } else if (404 == code) {
+        errorData.Title = "404 Not Found"
+    } else if (405 == code) {
+        errorData.Title = "405 Method Not Allowed"
+    }
+
+    w.WriteHeader(code)
+    errorView.Render(w, errorData)
+}
+
 func NotFoundController(w http.ResponseWriter, r *http.Request) {
-    notFound.Render(w, nil)
+    ErrorHandler(w, "404 Not Found", 404)
+}
+
+func AboutController(w http.ResponseWriter, r *http.Request) {
+    about.Render(w, nil)
 }
 
 type IndexData struct {
@@ -48,7 +74,7 @@ func GetPasteController(w http.ResponseWriter, r *http.Request) {
     pasteJson, err := ReadPaste(pasteId, IsValidUserAgent(r))
 
     if (nil != err) {
-        http.Error(w, "this paste is not found", http.StatusNotFound)
+        ErrorHandler(w, "this paste is not found", http.StatusNotFound)
         return
     }
 
@@ -63,30 +89,30 @@ func PostPasteController(w http.ResponseWriter, r *http.Request) {
 
     match, _ := regexp.MatchString("^[0-9,]+$", pasteContent)
     if (false == match) {
-        http.Error(w, "Invalid paste content", http.StatusBadRequest)
+        ErrorHandler(w, "Invalid paste content", http.StatusBadRequest)
         return
     }
 
     if nil != err || pasteMaxRead < 0 || pasteMaxRead > 500 {
-        http.Error(w, "max_read value must be a positive int", http.StatusBadRequest)
+        ErrorHandler(w, "max_read value must be a positive int", http.StatusBadRequest)
         return
     }
 
     var structMaxTime MaxTime
     if (false == structMaxTime.HasAllowed(pasteMaxTime)) {
-        http.Error(w, "this max_time value is not allowed", http.StatusBadRequest)
+        ErrorHandler(w, "this max_time value is not allowed", http.StatusBadRequest)
         return
     }
 
     var structPasteType PasteType
     if (false == structPasteType.HasAllowed(pasteType)) {
-        http.Error(w, "this type value is not allowed", http.StatusBadRequest)
+        ErrorHandler(w, "this type value is not allowed", http.StatusBadRequest)
         return
     }
 
     pasteId, err := CreatePaste(pasteContent, pasteType, pasteMaxTime, pasteMaxRead)
     if (nil != err) {
-        http.Error(w, err.Error(), http.StatusBadRequest)
+        ErrorHandler(w, err.Error(), http.StatusBadRequest)
         return
     }
 

@@ -1,0 +1,14 @@
+@import url(color.css);
+
+#error .title {
+    color: var(--primary-action-background-color);
+}
+
+#error .message {
+    margin: var(--default-margin-top) 0;
+}
+
+#error .logo {
+    text-align: center;
+    margin-top: calc(var(--default-margin-top) * 5);
+}

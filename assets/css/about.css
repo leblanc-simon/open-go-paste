@@ -1,0 +1,74 @@
+@import url(color.css);
+
+#about {
+	font-size: 1.2rem;
+}
+
+#about .logos, #about .authors {
+    display: flex;
+    flex-direction: row;
+	margin-top: 1rem;
+	margin-bottom: 4rem;
+}
+
+#about .authors {
+	margin-top: 4rem;
+	font-size: 1.2rem
+}
+
+#about .author {
+	position: relative;
+	font-weight: bold;
+    color: var(--primary-action-background-color);
+}
+
+#about .author::after {
+	content: attr(data-content);
+	position: absolute;
+	font-size: 1.1rem;
+    font-weight: normal;
+    bottom: -2rem;
+    left: 0;
+    right: 0;
+    font-style: italic;
+}
+
+#about .logo, #about .author {
+    flex: 1;
+	text-align: center;
+}
+
+#about .description {
+	text-align: justify;
+}
+
+#about a, #about a:link, #about a:visited, #about a:hover {
+	color: var(--primary-action-background-color);
+	text-decoration: none;
+}
+#about a:hover {
+	text-decoration: underline;
+}
+
+#about .open-source {
+	margin-top: 5rem;
+	border-top: 1px dashed var(--primary-action-background-color);
+}
+
+@media screen and (max-width: 768px) {
+	#about .logos, #about .authors {
+    	flex-direction: column;
+	}
+
+	#about .logo, #about .author {
+		margin-bottom: 2rem;
+	}
+
+	#about .logo img {
+		max-width: 100%;
+	}
+
+	#about .author::after {
+		bottom: -1.3rem;
+	}
+}
