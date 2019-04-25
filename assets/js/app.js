@@ -110,6 +110,11 @@ function encode(e){return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0
 
             if (expireDate < currentDate || 0 === nbAvailableRead) {
                 pasteInformation.innerHTML = pasteInformation.getAttribute('data-last-read');
+            } else if (0 === nbOfReadAllowed) {
+                let message = pasteInformation.getAttribute('data-information-no-nb-read');
+                message = message.replace('{dateAvailable}', expireDate.toLocaleDateString());
+                message = message.replace('{hourAvailable}', expireDate.toLocaleTimeString());
+                pasteInformation.innerHTML = message;
             } else {
                 let message = pasteInformation.getAttribute('data-information');
                 message = message.replace('{nbAvailableRead}', nbAvailableRead);
