@@ -18,7 +18,10 @@
         <meta name="theme-color" content="#662d91">
         <link rel="prefetch" href="/static/css/color.css">
         <link rel="stylesheet" href="/static/css/app.css">
-        {{- template "stylesheets" . -}}
+        {{- template "stylesheets" .Data -}}
+        {{- if (ne .CustomCss "") -}}
+        <link rel="stylesheet" href="{{.CustomCss}}">
+        {{- end -}}
     </head>
     <body>
         <header>
@@ -33,7 +36,7 @@
             </div>
         </header>
         <main>
-            {{- template "content" . -}}
+            {{- template "content" .Data -}}
         </main>
         <footer>
             <a href="/about">OpenGoPaste</a> est un service de gestionnaire d'extraits de texte et de code source.
@@ -41,7 +44,7 @@
             destinataire(s) du lien car elles sont chiffrées et déchiffrées par le navigateur.
             À aucun moment le service ne connait les données qui sont envoyées.
         </footer>
-        {{- template "javascripts" . -}}
+        {{- template "javascripts" .Data -}}
     </body>
 </html>
 {{- end -}}

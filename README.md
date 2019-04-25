@@ -39,6 +39,7 @@ All options are managed by environment variables.
 * Customize listen IP : `OPEN_GO_PASTE_SERVER=0.0.0.0`
 * Customize listen port : `OPEN_GO_PASTE_PORT=3000`
 * Customize datas directory : `OPEN_GO_PASTE_DATAS_FOLDER=/var/open-go-paste/datas`
+* Customize CSS : `OPEN_GO_PASTE_CUSTOM_CSS="/static/css/custom.css"`
 
 
 ## Thanks

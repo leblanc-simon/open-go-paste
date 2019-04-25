@@ -4,6 +4,7 @@ import (
   "html/template"
   "net/http"
   "path/filepath"
+  "os"
 )
 
 var LayoutDir string = "templates"
@@ -35,6 +36,15 @@ type View struct {
     Layout   string
 }
 
+type RenderData struct {
+    Data interface{}
+    CustomCss string
+}
+
 func (v *View) Render(w http.ResponseWriter, data interface{}) error {
-    return v.Template.ExecuteTemplate(w, v.Layout, data)
+    customCss := os.Getenv("OPEN_GO_PASTE_CUSTOM_CSS")
+
+    renderData := RenderData{Data: data, CustomCss: customCss}
+
+    return v.Template.ExecuteTemplate(w, v.Layout, renderData)
 }
