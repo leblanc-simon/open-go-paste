@@ -214,7 +214,7 @@ button {
 }
 
 #paste-content {
-    white-space: pre;
+    white-space: pre-wrap;
     padding: 0.5rem;
     border-radius: 0.2rem;
 }
@@ -223,12 +223,16 @@ button {
     background: #eee;
 }
 
+#paste-content.hljs {
+    white-space: pre;
+}
+
 #paste-content.markdown {
     white-space: normal;
 }
 
 .markdown h1, .markdown h2, .markdown h3, .markdown h4, .markdown h5, .markdown h6, .markdown p {
-    margin: 0.5rem 0
+    margin: 1rem 0
 }
 
 footer {
