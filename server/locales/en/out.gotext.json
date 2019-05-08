@@ -1,0 +1,392 @@
+{
+    "language": "en",
+    "messages": [
+        {
+            "id": "400 Bad Request",
+            "message": "400 Bad Request",
+            "translation": "400 Bad Request",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "404 Not Found",
+            "message": "404 Not Found",
+            "translation": "404 Not Found",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "405 Method Not Allowed",
+            "message": "405 Method Not Allowed",
+            "translation": "405 Method Not Allowed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "this paste is not found",
+            "message": "this paste is not found",
+            "translation": "this paste is not found",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Invalid paste content",
+            "message": "Invalid paste content",
+            "translation": "Invalid paste content",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "max_read value must be a positive int",
+            "message": "max_read value must be a positive int",
+            "translation": "max_read value must be a positive int",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "this max_time value is not allowed",
+            "message": "this max_time value is not allowed",
+            "translation": "this max_time value is not allowed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "this type value is not allowed",
+            "message": "this type value is not allowed",
+            "translation": "this type value is not allowed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.",
+            "message": "OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.",
+            "translation": "OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "All texts added via OpenGoPaste are encrypted in AES 256 by the browser before being sent to the server so that only the author of these lines and the recipient(s) can access the content.",
+            "message": "All texts added via OpenGoPaste are encrypted in AES 256 by the browser before being sent to the server so that only the author of these lines and the recipient(s) can access the content.",
+            "translation": "All texts added via OpenGoPaste are encrypted in AES 256 by the browser before being sent to the server so that only the author of these lines and the recipient(s) can access the content.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "OpenGoPaste build by:",
+            "message": "OpenGoPaste build by:",
+            "translation": "OpenGoPaste build by:",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Development and design",
+            "message": "Development and design",
+            "translation": "Development and design",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Icon and logo",
+            "message": "Icon and logo",
+            "translation": "Icon and logo",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "OpenGoPaste is free software.",
+            "message": "OpenGoPaste is free software.",
+            "translation": "OpenGoPaste is free software.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Code is under license",
+            "message": "Code is under license",
+            "translation": "Code is under license",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Logos are under license",
+            "message": "Logos are under license",
+            "translation": "Logos are under license",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Show source code",
+            "message": "Show source code",
+            "translation": "Show source code",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Software source code",
+            "message": "Software source code",
+            "translation": "Software source code",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Official logo source code",
+            "message": "Official logo source code",
+            "translation": "Official logo source code",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Alternative official logo source code",
+            "message": "Alternative official logo source code",
+            "translation": "Alternative official logo source code",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Unofficial logo source code",
+            "message": "Unofficial logo source code",
+            "translation": "Unofficial logo source code",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "work derived from an",
+            "message": "work derived from an",
+            "translation": "work derived from an",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Download original work",
+            "message": "Download original work",
+            "translation": "Download original work",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "original creation",
+            "message": "original creation",
+            "translation": "original creation",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "of",
+            "message": "of",
+            "translation": "of",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "modified by",
+            "message": "modified by",
+            "translation": "modified by",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "and finally continue by",
+            "message": "and finally continue by",
+            "translation": "and finally continue by",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Copy link and send it.",
+            "message": "Copy link and send it.",
+            "translation": "Copy link and send it.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Link has been copied !",
+            "message": "Link has been copied !",
+            "translation": "Link has been copied !",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Expire in",
+            "message": "Expire in",
+            "translation": "Expire in",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Format",
+            "message": "Format",
+            "translation": "Format",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Maximum read allowed",
+            "message": "Maximum read allowed",
+            "translation": "Maximum read allowed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Content",
+            "message": "Content",
+            "translation": "Content",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Save",
+            "message": "Save",
+            "translation": "Save",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.",
+            "message": "This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.",
+            "translation": "This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This message can be viewed up to §dateAvailable§ at §hourAvailable§.",
+            "message": "This message can be viewed up to §dateAvailable§ at §hourAvailable§.",
+            "translation": "This message can be viewed up to §dateAvailable§ at §hourAvailable§.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This message is available for the last time. You will not be able to consult it later.",
+            "message": "This message is available for the last time. You will not be able to consult it later.",
+            "translation": "This message is available for the last time. You will not be able to consult it later.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Create a new paste",
+            "message": "Create a new paste",
+            "translation": "Create a new paste",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "As for GoFast, it is better to be hidden!",
+            "message": "As for GoFast, it is better to be hidden!",
+            "translation": "As for GoFast, it is better to be hidden!",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.",
+            "message": "is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.",
+            "translation": "is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "5 minutes",
+            "message": "5 minutes",
+            "translation": "5 minutes",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "10 minutes",
+            "message": "10 minutes",
+            "translation": "10 minutes",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 hour",
+            "message": "1 hour",
+            "translation": "1 hour",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 day",
+            "message": "1 day",
+            "translation": "1 day",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 week",
+            "message": "1 week",
+            "translation": "1 week",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 month",
+            "message": "1 month",
+            "translation": "1 month",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 year",
+            "message": "1 year",
+            "translation": "1 year",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "text",
+            "message": "text",
+            "translation": "text",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "code",
+            "message": "code",
+            "translation": "code",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "markdown",
+            "message": "markdown",
+            "translation": "markdown",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This paste doesn't exist",
+            "message": "This paste doesn't exist",
+            "translation": "This paste doesn't exist",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Fail to read file {Arg_1} : {Arg_2}",
+            "message": "Fail to read file {Arg_1} : {Arg_2}",
+            "translation": "Fail to read file {Arg_1} : {Arg_2}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Arg_1",
+                    "string": "%[1]s",
+                    "type": "",
+                    "underlyingType": "string",
+                    "argNum": 1
+                },
+                {
+                    "id": "Arg_2",
+                    "string": "%[2]s",
+                    "type": "",
+                    "underlyingType": "string",
+                    "argNum": 2
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "This paste doesn't exist or is expired",
+            "message": "This paste doesn't exist or is expired",
+            "translation": "This paste doesn't exist or is expired",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        }
+    ]
+}

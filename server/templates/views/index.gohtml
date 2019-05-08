@@ -3,15 +3,15 @@
 
 {{- define "content" -}}
     <div id="link">
-        <div class="title">Copiez le lien et envoyez le.</div>
+        <div class="title">{{ trans "Copy link and send it." }}</div>
         <div class="link"></div>
-        <div id="copy-link" data-copied="Le lien a été copié">
+        <div id="copy-link" data-copied="{{ trans "Link has been copied !" }}">
             <svg height="512px" id="Layer_1" style="enable-background:new 0 0 512 512;" version="1.1" viewBox="0 0 512 512" width="512px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><g><polygon points="304,96 288,96 288,176 368,176 368,160 304,160  "/><path d="M325.3,64H160v48h-48v336h240v-48h48V139L325.3,64z M336,432H128V128h32v272h176V432z M384,384H176V80h142.7l65.3,65.6V384   z"/></g></svg>
         </div>
     </div>
     <form method="post" action="./" name="paste">
         <div class="form-item">
-            <label for="max_time">Expire dans</label>
+            <label for="max_time">{{ trans "Expire in" }}</label>
             <select name="max_time" id="max_time" required>
                 {{- range .AllowedTimes -}}
                 <option value="{{.DurationString}}" {{if eq .Default true}}selected="selected"{{end}}>{{.Label}}</option>
@@ -19,23 +19,23 @@
             </select>
         </div>
         <div class="form-item">
-            <label for="type">Format</label>
+            <label for="type">{{ trans "Format" }}</label>
             <select name="type" id="type" required>
                 {{- range .AllowedTypes -}}
-                <option value="{{.}}">{{.}}</option>
+                <option value="{{.Value}}" {{if eq .Default true}}selected="selected"{{end}}>{{.Label}}</option>
                 {{- end -}}
             </select>
         </div>
         <div class="form-item">
-            <label for="max_read">Nombre de lecture maximum</label>
+            <label for="max_read">{{ trans "Maximum read allowed" }}</label>
             <input type="number" value="1" name="max_read" id="max_read" min="0" max="500" required>
         </div>
         <div class="form-item form-paste">
-            <label for="paste">Contenu</label>
+            <label for="paste">{{ trans "Content" }}</label>
             <textarea name="paste" id="paste" required></textarea>
         </div>
         <div class="form-item form-action">
-            <button type="submit">Enregistrer</button>
+            <button type="submit">{{ trans "Save" }}</button>
         </div>
     </form>
 {{- end -}}

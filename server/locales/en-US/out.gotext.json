@@ -1,0 +1,175 @@
+{
+    "language": "en-US",
+    "messages": [
+        {
+            "id": "400 Bad Request",
+            "message": "400 Bad Request",
+            "translation": "400 Bad Request",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "404 Not Found",
+            "message": "404 Not Found",
+            "translation": "404 Not Found",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "405 Method Not Allowed",
+            "message": "405 Method Not Allowed",
+            "translation": "405 Method Not Allowed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "this paste is not found",
+            "message": "this paste is not found",
+            "translation": "this paste is not found",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Invalid paste content",
+            "message": "Invalid paste content",
+            "translation": "Invalid paste content",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "max_read value must be a positive int",
+            "message": "max_read value must be a positive int",
+            "translation": "max_read value must be a positive int",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "this max_time value is not allowed",
+            "message": "this max_time value is not allowed",
+            "translation": "this max_time value is not allowed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "this type value is not allowed",
+            "message": "this type value is not allowed",
+            "translation": "this type value is not allowed",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "5 minutes",
+            "message": "5 minutes",
+            "translation": "5 minutes",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "10 minutes",
+            "message": "10 minutes",
+            "translation": "10 minutes",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 hour",
+            "message": "1 hour",
+            "translation": "1 hour",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 day",
+            "message": "1 day",
+            "translation": "1 day",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 week",
+            "message": "1 week",
+            "translation": "1 week",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 month",
+            "message": "1 month",
+            "translation": "1 month",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "1 year",
+            "message": "1 year",
+            "translation": "1 year",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "text",
+            "message": "text",
+            "translation": "text",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "code",
+            "message": "code",
+            "translation": "code",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "markdown",
+            "message": "markdown",
+            "translation": "markdown",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "This paste doesn't exist",
+            "message": "This paste doesn't exist",
+            "translation": "This paste doesn't exist",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Fail to read file {Arg_1} : {Arg_2}",
+            "message": "Fail to read file {Arg_1} : {Arg_2}",
+            "translation": "Fail to read file {Arg_1} : {Arg_2}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Arg_1",
+                    "string": "%[1]s",
+                    "type": "",
+                    "underlyingType": "string",
+                    "argNum": 1
+                },
+                {
+                    "id": "Arg_2",
+                    "string": "%[2]s",
+                    "type": "",
+                    "underlyingType": "string",
+                    "argNum": 2
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "This paste doesn't exist or is expired",
+            "message": "This paste doesn't exist or is expired",
+            "translation": "This paste doesn't exist or is expired",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
+            "id": "Copy link and send it by mail.",
+            "message": "Copy link and send it by mail.",
+            "translation": "Copy link and send it by mail.",
+            "translatorComment": "template",
+            "fuzzy": false
+        }
+    ]
+}

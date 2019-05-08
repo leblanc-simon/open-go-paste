@@ -8,6 +8,7 @@
 
 ```bash
 go get github.com/gorilla/mux
+go get -u golang.org/x/text/cmd/gotext
 git clone https://github.com/leblanc-simon/open-go-paste
 cd open-go-paste/server
 go run *.go
@@ -41,6 +42,9 @@ All options are managed by environment variables.
 * Customize datas directory : `OPEN_GO_PASTE_DATAS_FOLDER=/var/open-go-paste/datas`
 * Customize CSS : `OPEN_GO_PASTE_CUSTOM_CSS="/static/css/custom.css"`
 
+### Internationalisation
+
+In template, we use the function `trans`. To extract string, use `release/extract-message-from-template.sh`
 
 ## Thanks
 
@@ -56,4 +60,4 @@ All options are managed by environment variables.
 ## License
 
 * Code : [WTFPL](http://www.wtfpl.net/)
-* Logo : [Art Libre](http://artlibre.org/)
+* Logos : [Art Libre](http://artlibre.org/)
