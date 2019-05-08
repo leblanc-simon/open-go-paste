@@ -30,11 +30,11 @@ func ErrorHandler(w http.ResponseWriter, error string, code int) {
     errorData.Message = error
 
     if (400 == code) {
-        errorData.Title = "400 Bad Request"
+        errorData.Title = locale.t("400 Bad Request")
     } else if (404 == code) {
-        errorData.Title = "404 Not Found"
+        errorData.Title = locale.t("404 Not Found")
     } else if (405 == code) {
-        errorData.Title = "405 Method Not Allowed"
+        errorData.Title = locale.t("405 Method Not Allowed")
     }
 
     w.WriteHeader(code)
@@ -42,18 +42,21 @@ func ErrorHandler(w http.ResponseWriter, error string, code int) {
 }
 
 func NotFoundController(w http.ResponseWriter, r *http.Request) {
-    ErrorHandler(w, "404 Not Found", 404)
+    locale = NewLocale(r)
+    ErrorHandler(w, locale.t("404 Not Found"), 404)
 }
 
 func AboutController(w http.ResponseWriter, r *http.Request) {
+    locale = NewLocale(r)
     about.Render(w, nil)
 }
 
 type IndexData struct {
     AllowedTimes []DurationTime
-    AllowedTypes []string
+    AllowedTypes []PasteTypeStruct
 }
 func IndexController(w http.ResponseWriter, r *http.Request) {
+    locale = NewLocale(r)
     var maxTime MaxTime
     var pasteType PasteType
 
@@ -68,13 +71,14 @@ func IsValidUserAgent(r *http.Request) bool {
 }
 
 func GetPasteController(w http.ResponseWriter, r *http.Request) {
+    locale = NewLocale(r)
     vars := mux.Vars(r)
     pasteId := vars["pasteId"]
 
     pasteJson, err := ReadPaste(pasteId, IsValidUserAgent(r))
 
     if (nil != err) {
-        ErrorHandler(w, "this paste is not found", http.StatusNotFound)
+        ErrorHandler(w, locale.t("this paste is not found"), http.StatusNotFound)
         return
     }
 
@@ -82,6 +86,7 @@ func GetPasteController(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostPasteController(w http.ResponseWriter, r *http.Request) {
+    locale = NewLocale(r)
     pasteContent := r.FormValue("paste")
     pasteType := r.FormValue("type")
     pasteMaxTime := r.FormValue("max_time")
@@ -89,24 +94,24 @@ func PostPasteController(w http.ResponseWriter, r *http.Request) {
 
     match, _ := regexp.MatchString("^[0-9,]+$", pasteContent)
     if (false == match) {
-        ErrorHandler(w, "Invalid paste content", http.StatusBadRequest)
+        ErrorHandler(w, locale.t("Invalid paste content"), http.StatusBadRequest)
         return
     }
 
     if nil != err || pasteMaxRead < 0 || pasteMaxRead > 500 {
-        ErrorHandler(w, "max_read value must be a positive int", http.StatusBadRequest)
+        ErrorHandler(w, locale.t("max_read value must be a positive int"), http.StatusBadRequest)
         return
     }
 
     var structMaxTime MaxTime
     if (false == structMaxTime.HasAllowed(pasteMaxTime)) {
-        ErrorHandler(w, "this max_time value is not allowed", http.StatusBadRequest)
+        ErrorHandler(w, locale.t("this max_time value is not allowed"), http.StatusBadRequest)
         return
     }
 
     var structPasteType PasteType
     if (false == structPasteType.HasAllowed(pasteType)) {
-        ErrorHandler(w, "this type value is not allowed", http.StatusBadRequest)
+        ErrorHandler(w, locale.t("this type value is not allowed"), http.StatusBadRequest)
         return
     }
 

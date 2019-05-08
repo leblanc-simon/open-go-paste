@@ -20,7 +20,15 @@ func layoutFiles() []string {
 
 func NewView(layout string, files ...string) *View {
     files = append(files, layoutFiles()...)
-    t, err := template.ParseFiles(files...)
+    t := template.New(files[0])
+
+    t.Funcs(template.FuncMap{
+        "trans": func(text string) string {
+            return locale.t(text)
+        },
+    })
+
+    t, err := t.ParseFiles(files...)
     if err != nil {
         panic(err)
     }
@@ -39,6 +47,7 @@ type View struct {
 type RenderData struct {
     Data interface{}
     CustomCss string
+    Locale *Locale
 }
 
 func (v *View) Render(w http.ResponseWriter, data interface{}) error {

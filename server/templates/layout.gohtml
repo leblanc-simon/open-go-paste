@@ -26,23 +26,20 @@
     <body>
         <header>
             <div class="logo">
-                <a href="/" title="Créez un nouveau paste">
+                <a href="/" title="{{ trans "Create a new paste" }}">
                     <img width="88" height="88" src="/static/img/logo3.svg" />
                 </a>
             </div>
             <div class="title">
                 <h1>OpenGo<span class="title">Paste</span></h1>
-                <summary>Comme pour le GoFast, il est préférable d'être caché !</summary>
+                <summary>{{ trans "As for GoFast, it is better to be hidden!" }}</summary>
             </div>
         </header>
         <main>
             {{- template "content" .Data -}}
         </main>
         <footer>
-            <a href="/about">OpenGoPaste</a> est un service de gestionnaire d'extraits de texte et de code source.
-            Les données envoyées par ce service ne sont connues que par vous seul et le(s)
-            destinataire(s) du lien car elles sont chiffrées et déchiffrées par le navigateur.
-            À aucun moment le service ne connait les données qui sont envoyées.
+            <a href="/about">OpenGoPaste</a> {{ trans "is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent." }}
         </footer>
         {{- template "javascripts" .Data -}}
     </body>

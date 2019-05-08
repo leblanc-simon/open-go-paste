@@ -6,9 +6,9 @@
 
 {{- define "content" -}}
     <div class="paste-information show"
-        data-information="Ce message pourra être consulté encore {nbAvailableRead} fois ou jusqu'au {dateAvailable} à {hourAvailable}."
-        data-information-no-nb-read="Ce message pourra être consulté jusqu'au {dateAvailable} à {hourAvailable}."
-        data-last-read="Ce message est disponible pour la dernière fois. Vous ne pourrez plus le consulter par la suite."
+        data-information="{{ trans "This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§." }}"
+        data-information-no-nb-read="{{ trans "This message can be viewed up to §dateAvailable§ at §hourAvailable§." }}"
+        data-last-read="{{ trans "This message is available for the last time. You will not be able to consult it later." }}"
     ></div>
     <div id="paste-content"></div>
 {{- end -}}

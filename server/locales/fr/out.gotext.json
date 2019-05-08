@@ -1,0 +1,286 @@
+{
+    "language": "fr",
+    "messages": [
+        {
+            "id": "400 Bad Request",
+            "message": "400 Bad Request",
+            "translation": "400 Mauvaise requête"
+        },
+        {
+            "id": "404 Not Found",
+            "message": "404 Not Found",
+            "translation": "404 Page non trouvée"
+        },
+        {
+            "id": "405 Method Not Allowed",
+            "message": "405 Method Not Allowed",
+            "translation": "405 Méthode non autorisée"
+        },
+        {
+            "id": "this paste is not found",
+            "message": "this paste is not found",
+            "translation": "Ce contenu n'a pas été trouvé"
+        },
+        {
+            "id": "Invalid paste content",
+            "message": "Invalid paste content",
+            "translation": "Contenu invalide"
+        },
+        {
+            "id": "max_read value must be a positive int",
+            "message": "max_read value must be a positive int",
+            "translation": "La valeur de max_read doit être un entier positif"
+        },
+        {
+            "id": "this max_time value is not allowed",
+            "message": "this max_time value is not allowed",
+            "translation": "La valeur de max_time n'est pas autorisée"
+        },
+        {
+            "id": "this type value is not allowed",
+            "message": "this type value is not allowed",
+            "translation": "La valeur du type n'est pas autorisée"
+        },
+        {
+            "id": "OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.",
+            "message": "OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.",
+            "translation": "OpenGoPaste est un logiciel libre permettant mettre en ligne de manière sécurisée des notes, du code ou des textes afin de les partager."
+        },
+        {
+            "id": "All texts added via OpenGoPaste are encrypted in AES 256 by the browser before being sent to the server so that only the author of these lines and the recipient(s) can access the content.",
+            "message": "All texts added via OpenGoPaste are encrypted in AES 256 by the browser before being sent to the server so that only the author of these lines and the recipient(s) can access the content.",
+            "translation": "L'ensemble des textes ajoutés via OpenGoPaste sont chiffrés en AES 256 par le navigateur avant d'être envoyés au serveur afin que seul l'auteur de ces lignes et le ou les destinataires ne puissent accéder au contenu."
+        },
+        {
+            "id": "OpenGoPaste build by:",
+            "message": "OpenGoPaste build by:",
+            "translation": "OpenGoPaste a été réalisé par :"
+        },
+        {
+            "id": "Development and design",
+            "message": "Development and design",
+            "translation": "Développement et design"
+        },
+        {
+            "id": "Icon and logo",
+            "message": "Icon and logo",
+            "translation": "Icône et logo"
+        },
+        {
+            "id": "OpenGoPaste is free software.",
+            "message": "OpenGoPaste is free software.",
+            "translation": "OpenGoPaste est un logiciel libre."
+        },
+        {
+            "id": "Code is under license",
+            "message": "Code is under license",
+            "translation": "Le code est sous licence"
+        },
+        {
+            "id": "Logos are under license",
+            "message": "Logos are under license",
+            "translation": "Les logos sont sous licence "
+        },
+        {
+            "id": "Show source code",
+            "message": "Show source code",
+            "translation": "Voir le code source"
+        },
+        {
+            "id": "Software source code",
+            "message": "Software source code",
+            "translation": "Code source du logiciel"
+        },
+        {
+            "id": "Official logo source code",
+            "message": "Official logo source code",
+            "translation": "Source du logo officiel"
+        },
+        {
+            "id": "Alternative official logo source code",
+            "message": "Alternative official logo source code",
+            "translation": "Source du second logo officiel"
+        },
+        {
+            "id": "Unofficial logo source code",
+            "message": "Unofficial logo source code",
+            "translation": "Source du logo officieux"
+        },
+        {
+            "id": "work derived from an",
+            "message": "work derived from an",
+            "translation": "œuvre dérivée d'une"
+        },
+        {
+            "id": "Download original work",
+            "message": "Download original work",
+            "translation": "Télécharger la création originale"
+        },
+        {
+            "id": "original creation",
+            "message": "original creation",
+            "translation": "création originale"
+        },
+        {
+            "id": "of",
+            "message": "of",
+            "translation": "de"
+        },
+        {
+            "id": "modified by",
+            "message": "modified by",
+            "translation": "modifié par"
+        },
+        {
+            "id": "and finally continue by",
+            "message": "and finally continue by",
+            "translation": "et enfin repris par"
+        },
+        {
+            "id": "Copy link and send it.",
+            "message": "Copy link and send it.",
+            "translation": "Copier le lien et envoyer le."
+        },
+        {
+            "id": "Link has been copied !",
+            "message": "Link has been copied !",
+            "translation": "Le lien a été copié !"
+        },
+        {
+            "id": "Expire in",
+            "message": "Expire in",
+            "translation": "Expire dans"
+        },
+        {
+            "id": "Format",
+            "message": "Format",
+            "translation": "Format"
+        },
+        {
+            "id": "Maximum read allowed",
+            "message": "Maximum read allowed",
+            "translation": "Nombre de lecture maximum"
+        },
+        {
+            "id": "Content",
+            "message": "Content",
+            "translation": "Contenu"
+        },
+        {
+            "id": "Save",
+            "message": "Save",
+            "translation": "Enregistrer"
+        },
+        {
+            "id": "This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.",
+            "message": "This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.",
+            "translation": "Ce message pourra être consulté encore §nbAvailableRead§ fois ou jusqu'au §dateAvailable§ à §hourAvailable§."
+        },
+        {
+            "id": "This message can be viewed up to §dateAvailable§ at §hourAvailable§.",
+            "message": "This message can be viewed up to §dateAvailable§ at §hourAvailable§.",
+            "translation": "Ce message pourra être consulté jusqu'au §dateAvailable§ à §hourAvailable§."
+        },
+        {
+            "id": "This message is available for the last time. You will not be able to consult it later.",
+            "message": "This message is available for the last time. You will not be able to consult it later.",
+            "translation": "Ce message est disponible pour la dernière fois. Vous ne pourrez plus le consulter par la suite."
+        },
+        {
+            "id": "Create a new paste",
+            "message": "Create a new paste",
+            "translation": "Créer un nouveau paste"
+        },
+        {
+            "id": "As for GoFast, it is better to be hidden!",
+            "message": "As for GoFast, it is better to be hidden!",
+            "translation": "Comme pour le GoFast, il est préférable d'être caché !"
+        },
+        {
+            "id": "is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.",
+            "message": "is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.",
+            "translation": "est un service de gestion d'extraits de texte et de code source. Les données envoyées par ce service ne sont connues que par vous seul et le(s) destinataire(s) du lien car elles sont chiffrées et déchiffrées par le navigateur. À aucun moment le service ne connait les données qui sont envoyées."
+        },
+        {
+            "id": "5 minutes",
+            "message": "5 minutes",
+            "translation": "5 minutes"
+        },
+        {
+            "id": "10 minutes",
+            "message": "10 minutes",
+            "translation": "10 minutes"
+        },
+        {
+            "id": "1 hour",
+            "message": "1 hour",
+            "translation": "1 heure"
+        },
+        {
+            "id": "1 day",
+            "message": "1 day",
+            "translation": "1 jour"
+        },
+        {
+            "id": "1 week",
+            "message": "1 week",
+            "translation": "1 semaine"
+        },
+        {
+            "id": "1 month",
+            "message": "1 month",
+            "translation": "1 mois"
+        },
+        {
+            "id": "1 year",
+            "message": "1 year",
+            "translation": "1 an"
+        },
+        {
+            "id": "text",
+            "message": "text",
+            "translation": "Texte"
+        },
+        {
+            "id": "code",
+            "message": "code",
+            "translation": "Code"
+        },
+        {
+            "id": "markdown",
+            "message": "markdown",
+            "translation": "Markdown"
+        },
+        {
+            "id": "This paste doesn't exist",
+            "message": "This paste doesn't exist",
+            "translation": "Ce contenu n'existe pas"
+        },
+        {
+            "id": "Fail to read file {Arg_1} : {Arg_2}",
+            "message": "Fail to read file {Arg_1} : {Arg_2}",
+            "translation": "Erreur dans la lecture du fichier {Arg_1} : {Arg_2}",
+            "placeholders": [
+                {
+                    "id": "Arg_1",
+                    "string": "%[1]s",
+                    "type": "",
+                    "underlyingType": "string",
+                    "argNum": 1
+                },
+                {
+                    "id": "Arg_2",
+                    "string": "%[2]s",
+                    "type": "",
+                    "underlyingType": "string",
+                    "argNum": 2
+                }
+            ]
+        },
+        {
+            "id": "This paste doesn't exist or is expired",
+            "message": "This paste doesn't exist or is expired",
+            "translation": "Ce contenu n'existe pas ou a expiré"
+        }
+    ]
+}

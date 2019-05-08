@@ -35,16 +35,15 @@ type MaxTime struct {
 
 func (mt MaxTime) GetAllowed() []DurationTime {
     maxTimes := []DurationTime{}
-    maxTimes = append(maxTimes, DurationTime{DurationString: "5m", Label: "5 minutes", Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "10m", Label: "10 minutes", Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1h", Label: "1 heure", Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1D", Label: "1 jour", Default: true})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1W", Label: "1 semaine", Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1M", Label: "1 mois", Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1Y", Label: "1 an", Default: false})
+    maxTimes = append(maxTimes, DurationTime{DurationString: "5m", Label: locale.t("5 minutes"), Default: false})
+    maxTimes = append(maxTimes, DurationTime{DurationString: "10m", Label: locale.t("10 minutes"), Default: false})
+    maxTimes = append(maxTimes, DurationTime{DurationString: "1h", Label: locale.t("1 hour"), Default: false})
+    maxTimes = append(maxTimes, DurationTime{DurationString: "1D", Label: locale.t("1 day"), Default: true})
+    maxTimes = append(maxTimes, DurationTime{DurationString: "1W", Label: locale.t("1 week"), Default: false})
+    maxTimes = append(maxTimes, DurationTime{DurationString: "1M", Label: locale.t("1 month"), Default: false})
+    maxTimes = append(maxTimes, DurationTime{DurationString: "1Y", Label: locale.t("1 year"), Default: false})
 
     return maxTimes;
-    // return []string {"5 minutes", "10 minutes", "1 hour", "1 day", "1 week", "1 month", "1 year", "never"}
 }
 
 func (mt MaxTime) GetExpirationTime(wantedExpiration string) (time.Time, error) {
@@ -84,16 +83,26 @@ func (mt MaxTime) HasAllowed(maxTime string) bool {
     return false
 }
 
+type PasteTypeStruct struct {
+    Value string
+    Label string
+    Default bool
+}
+
 type PasteType struct {
 }
 
-func (pt PasteType) GetAllowed() []string {
-    return []string {"text", "code", "markdown"}
+func (pt PasteType) GetAllowed() []PasteTypeStruct {
+    types := []PasteTypeStruct{}
+    types = append(types, PasteTypeStruct{Value: "text", Label: locale.t("text"), Default: true})
+    types = append(types, PasteTypeStruct{Value: "code", Label: locale.t("code"), Default: false})
+    types = append(types, PasteTypeStruct{Value: "markdown", Label: locale.t("markdown"), Default: false})
+    return types
 }
 
 func (pt PasteType) HasAllowed(pasteType string) bool {
     for _, a := range pt.GetAllowed() {
-        if (a == pasteType) {
+        if (a.Value == pasteType) {
             return true
         }
     }
@@ -188,14 +197,14 @@ func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
     var paste Paste
 
     if (false == isPasteFileExist(id)) {
-        return paste, errors.New("This paste doesn't exist")
+        return paste, errors.New(locale.t("This paste doesn't exist"))
     }
 
     pasteFilename := generatePasteFilename(id)
 
     pasteJson, err := ioutil.ReadFile(pasteFilename)
     if (nil != err) {
-        return paste, errors.New(fmt.Sprintf("Fail to read file %s : %s", pasteFilename, err))
+        return paste, errors.New(fmt.Sprintf(locale.t("Fail to read file %s : %s"), pasteFilename, err))
     }
 
     json.Unmarshal(pasteJson, &paste)
@@ -208,7 +217,7 @@ func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
     deleteIfNecessary(paste, pasteFilename)
 
     if (true == isPasteIsExpired(paste)) {
-        return paste, errors.New("This paste doesn't exist or is expired")
+        return paste, errors.New(locale.t("This paste doesn't exist or is expired"))
     }
 
     return paste, nil
