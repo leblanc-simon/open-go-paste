@@ -9,13 +9,20 @@ export default class Crypto {
         this.jwk = null;
         this.counter = null;
         if (window.location.hash) {
-            const splitHash = window.location.hash.substring(1).split('|');
+            let hash = window.location.hash.substring(1);
+            if (/^[0-9,]+%7C/.test(hash)) {
+                // URL is encoding !!! WTF !!! Are you Apple adict ass hole !
+                hash = decodeURIComponent(hash);
+            }
+
+            const splitHash = hash.split('|');
             this.counter = new ArrayBuffer(randomValuesSize);
             const counterDatas = splitHash.shift().split(',');
             let bufferView = new Uint8Array(this.counter);
             counterDatas.forEach((counterData, index) => {
                 bufferView[index] = counterData;
-            })
+            });
+
             this.jwk = JSON.parse(atob(splitHash.join('|')));
         }
     }
