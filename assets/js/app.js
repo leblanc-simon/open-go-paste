@@ -36,11 +36,14 @@ function encode(e){return e.replace(/[^]/g,function(e){return"&#"+e.charCodeAt(0
                     }).then(text => {
                         const counterPass = crypto.getPasswordAndCounter();
                         const linkDiv = document.getElementById('link');
+                        const sendLink = document.getElementById('send-link');
                         linkDiv.querySelector('.link').innerHTML = `
                             <a href="/p/${text}#${counterPass}">
                                 ${form.action}p/${text}#${counterPass}
                             </a>
                         `;
+                        const emailBody = encodeURIComponent(`<${form.action}p/${text}#${counterPass}>`);
+                        sendLink.setAttribute('href', `mailto:?body=${emailBody}`);
                         linkDiv.classList.add('show');
                     }).catch(error => {
                         console.error(error);

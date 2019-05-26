@@ -50,7 +50,7 @@ In template, we use the function `trans`. To extract string, use `release/extrac
 
 * https://highlightjs.org/
 * https://github.com/showdownjs/showdown
-* https://ionicons.com/ (Copy icon is licensed under MIT)
+* https://ionicons.com/ (Copy and mail icons are licensed under MIT)
 
 ## Authors
 

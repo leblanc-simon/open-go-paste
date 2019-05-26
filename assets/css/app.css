@@ -102,12 +102,12 @@ main {
 }
 
 #link .link {
-    width: calc(100% - 35px - var(--default-margin-top));
+    width: calc(100% - 90px - var(--default-margin-top));
     overflow-x: scroll;
     white-space: nowrap;
 }
 
-#copy-link {
+#copy-link, #send-link {
     display: flex;
     position: relative;
     margin-left: var(--default-margin-top);
@@ -126,7 +126,7 @@ main {
     left: -100%;
 }
 
-#copy-link svg {
+#copy-link svg, #send-link svg {
     width: 35px;
     height: 35px;
     fill: var(--primary-action-text-color);
