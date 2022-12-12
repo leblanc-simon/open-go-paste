@@ -16,18 +16,18 @@ import (
 var pasteFolder string
 
 type Paste struct {
-    Id string `json:"id"`
-    ExpireTime time.Time `json:"expire"`
-    NumberOfRead int `json:"number_of_read"`
-    AllowedNumberOfRead int `json:"allowed_number_of_read"`
-    Type string `json:"type"`
-    Data string `json:"data"`
+    Id                  string    `json:"id"`
+    ExpireTime          time.Time `json:"expire"`
+    NumberOfRead        int       `json:"number_of_read"`
+    AllowedNumberOfRead int       `json:"allowed_number_of_read"`
+    Type                string    `json:"type"`
+    Data                string    `json:"data"`
 }
 
 type DurationTime struct {
     DurationString string
-    Label string
-    Default bool
+    Label          string
+    Default        bool
 }
 
 type MaxTime struct {
@@ -43,7 +43,7 @@ func (mt MaxTime) GetAllowed() []DurationTime {
     maxTimes = append(maxTimes, DurationTime{DurationString: "1M", Label: locale.t("1 month"), Default: false})
     maxTimes = append(maxTimes, DurationTime{DurationString: "1Y", Label: locale.t("1 year"), Default: false})
 
-    return maxTimes;
+    return maxTimes
 }
 
 func (mt MaxTime) GetExpirationTime(wantedExpiration string) (time.Time, error) {
@@ -51,7 +51,7 @@ func (mt MaxTime) GetExpirationTime(wantedExpiration string) (time.Time, error) 
     switch wantedExpiration {
     case "5m", "10m", "1h":
         durationAdded, err := time.ParseDuration(wantedExpiration)
-        if (nil != err) {
+        if nil != err {
             return expirationDate, err
         }
         expirationDate = expirationDate.Add(durationAdded)
@@ -75,7 +75,7 @@ func (mt MaxTime) GetExpirationTime(wantedExpiration string) (time.Time, error) 
 
 func (mt MaxTime) HasAllowed(maxTime string) bool {
     for _, a := range mt.GetAllowed() {
-        if (a.DurationString == maxTime) {
+        if a.DurationString == maxTime {
             return true
         }
     }
@@ -84,8 +84,8 @@ func (mt MaxTime) HasAllowed(maxTime string) bool {
 }
 
 type PasteTypeStruct struct {
-    Value string
-    Label string
+    Value   string
+    Label   string
     Default bool
 }
 
@@ -102,7 +102,7 @@ func (pt PasteType) GetAllowed() []PasteTypeStruct {
 
 func (pt PasteType) HasAllowed(pasteType string) bool {
     for _, a := range pt.GetAllowed() {
-        if (a.Value == pasteType) {
+        if a.Value == pasteType {
             return true
         }
     }
@@ -112,7 +112,7 @@ func (pt PasteType) HasAllowed(pasteType string) bool {
 
 func getPasteFolder() string {
     envFolder := os.Getenv("OPEN_GO_PASTE_DATAS_FOLDER")
-    if ("" != envFolder) {
+    if envFolder != "" {
         return envFolder
     }
 
@@ -134,11 +134,16 @@ func generatePasteId() string {
     for {
         pasteUuid, _ := uuid.NewRandom()
         pasteId := pasteUuid.String()
-        if (false == isPasteFileExist(pasteId)) {
+        if !isPasteFileExist(pasteId) {
             log.Printf("pasteId will be %s", pasteId)
             return pasteId
         }
     }
+}
+
+func isValidUUID(u string) bool {
+    _, err := uuid.Parse(u)
+    return err == nil
 }
 
 func generatePasteFilename(id string) string {
@@ -157,7 +162,7 @@ func isPasteFileExist(id string) bool {
 func isPasteIsExpired(paste Paste) bool {
     currentTime := time.Now()
 
-    return currentTime.After(paste.ExpireTime);
+    return currentTime.After(paste.ExpireTime)
 }
 
 func CreatePaste(data string, pasteType string, finishTime string, numberOfRead int) (string, error) {
@@ -172,12 +177,12 @@ func CreatePaste(data string, pasteType string, finishTime string, numberOfRead 
     paste.Type = pasteType
     paste.Data = data
 
-    if (nil != err) {
+    if nil != err {
         return "", err
     }
 
     pasteJson, err := json.Marshal(paste)
-    if (nil != err) {
+    if nil != err {
         return "", err
     }
 
@@ -196,27 +201,31 @@ func CreatePaste(data string, pasteType string, finishTime string, numberOfRead 
 func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
     var paste Paste
 
-    if (false == isPasteFileExist(id)) {
+    if !isValidUUID(id) {
+        return paste, errors.New(locale.t("This paste doesn't exist"))
+    }
+
+    if !isPasteFileExist(id) {
         return paste, errors.New(locale.t("This paste doesn't exist"))
     }
 
     pasteFilename := generatePasteFilename(id)
 
     pasteJson, err := ioutil.ReadFile(pasteFilename)
-    if (nil != err) {
-        return paste, errors.New(fmt.Sprintf(locale.t("Fail to read file %s : %s"), pasteFilename, err))
+    if nil != err {
+        return paste, fmt.Errorf(locale.t("Fail to read file %s : %s"), pasteFilename, err)
     }
 
     json.Unmarshal(pasteJson, &paste)
 
-    if (true == isValidUserAgent) {
+    if isValidUserAgent {
         // Increment number of read only if we have a valid user-agent
         paste.NumberOfRead = paste.NumberOfRead + 1
     }
 
     deleteIfNecessary(paste, pasteFilename)
 
-    if (true == isPasteIsExpired(paste)) {
+    if isPasteIsExpired(paste) {
         return paste, errors.New(locale.t("This paste doesn't exist or is expired"))
     }
 
@@ -224,16 +233,16 @@ func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
 }
 
 func deleteIfNecessary(paste Paste, pasteFilename string) {
-    if (paste.AllowedNumberOfRead > 0 && paste.NumberOfRead >= paste.AllowedNumberOfRead) {
+    if paste.AllowedNumberOfRead > 0 && paste.NumberOfRead >= paste.AllowedNumberOfRead {
         removePasteFile(pasteFilename)
     }
 
-    if (true == isPasteIsExpired(paste)) {
+    if isPasteIsExpired(paste) {
         removePasteFile(pasteFilename)
     }
 
     pasteJson, err := json.Marshal(paste)
-    if (nil != err) {
+    if nil != err {
         // TODO: Process error
     }
     ioutil.WriteFile(pasteFilename, pasteJson, 0600)
@@ -251,12 +260,12 @@ func removePasteFile(pasteFilename string) {
 
     for {
         pathToRemove = filepath.Dir(pathToRemove)
-        if (pasteFolder == pathToRemove) {
-            return;
+        if pasteFolder == pathToRemove {
+            return
         }
         err := os.Remove(pathToRemove)
-        if (nil != err) {
-            return;
+        if nil != err {
+            return
         }
     }
 }

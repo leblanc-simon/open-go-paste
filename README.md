@@ -9,6 +9,7 @@
 ```bash
 go get github.com/gorilla/mux
 go get -u golang.org/x/text/cmd/gotext
+go get -u github.com/procyon-projects/chrono
 git clone https://github.com/leblanc-simon/open-go-paste
 cd open-go-paste/server
 go run *.go
@@ -41,6 +42,7 @@ All options are managed by environment variables.
 * Customize listen port : `OPEN_GO_PASTE_PORT=3000`
 * Customize datas directory : `OPEN_GO_PASTE_DATAS_FOLDER=/var/open-go-paste/datas`
 * Customize CSS : `OPEN_GO_PASTE_CUSTOM_CSS="/static/css/custom.css"`
+* Customize clean datas CRON : `OPEN_GO_PASTE_CRON="0 0 0 * * *"` (CRON syntax with seconds)
 
 ### Internationalisation
 

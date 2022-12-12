@@ -16,13 +16,13 @@ func getServerParameters() bytes.Buffer {
     envPort := os.Getenv("OPEN_GO_PASTE_PORT")
 
     var server bytes.Buffer
-    if ("" != envServer) {
+    if envServer != "" {
         server.WriteString(envServer)
     } else {
         server.WriteString(defaultServer)
     }
 
-    if ("" != envPort) {
+    if envPort != "" {
         server.WriteString(":")
         server.WriteString(envPort)
     } else {

@@ -5,9 +5,10 @@ package main
 import (
     "net/http"
 
+    _ "leblanc.io/open-go-paste/catalog"
+
     "golang.org/x/text/language"
     "golang.org/x/text/message"
-    _ "./catalog"
 )
 
 var matcher = language.NewMatcher(message.DefaultCatalog.Languages())
