@@ -1,5 +1,5 @@
 /assets/css/custom.css
 /datas/*
 !/datas/.gitkeep
-/node_modules
+/release/open-go-paste-*.tar.bz2
 /server/open-go-paste
