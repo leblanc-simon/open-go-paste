@@ -1,4 +1,4 @@
-VERSION := $(shell git describe --always --dirty=+)
+VERSION := $(shell git tag | tail -n1)
 MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 CURRENT_DIR := $(patsubst %/,%,$(dir $(MKFILE_PATH)))
 OUTDIR := ${CURRENT_DIR}/release/${VERSION}
