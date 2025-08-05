@@ -14,7 +14,10 @@ type dictionary struct {
 }
 
 func (d *dictionary) Lookup(key string) (data string, ok bool) {
-	p := messageKeyToIndex[key]
+	p, ok := messageKeyToIndex[key]
+	if !ok {
+		return "", false
+	}
 	start, end := d.index[p], d.index[p+1]
 	if start == end {
 		return "", false
@@ -66,18 +69,18 @@ var messageKeyToIndex = map[string]int{
 	"Official logo source code":                 18,
 	"OpenGoPaste build by:":                     10,
 	"OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.": 8,
-	"OpenGoPaste is free software.":                                                                         13,
-	"Save":                 33,
-	"Show source code":     16,
-	"Software source code": 17,
+	"OpenGoPaste is free software.": 13,
+	"Save":                          33,
+	"Show source code":              16,
+	"Software source code":          17,
 	"This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.": 34,
 	"This message can be viewed up to §dateAvailable§ at §hourAvailable§.":                                  35,
 	"This message is available for the last time. You will not be able to consult it later.":                36,
-	"This paste doesn't exist":                                                                              50,
-	"This paste doesn't exist or is expired":                                                                52,
-	"Unofficial logo source code":                                                                           20,
-	"and finally continue by":                                                                               26,
-	"code": 48,
+	"This paste doesn't exist":               50,
+	"This paste doesn't exist or is expired": 52,
+	"Unofficial logo source code":            20,
+	"and finally continue by":                26,
+	"code":                                   48,
 	"is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.": 39,
 	"markdown":                              49,
 	"max_read value must be a positive int": 5,
@@ -85,10 +88,10 @@ var messageKeyToIndex = map[string]int{
 	"of":                                    24,
 	"original creation":                     23,
 	"text":                                  47,
-	"this max_time value is not allowed": 6,
-	"this paste is not found":            3,
-	"this type value is not allowed":     7,
-	"work derived from an":               21,
+	"this max_time value is not allowed":    6,
+	"this paste is not found":               3,
+	"this type value is not allowed":        7,
+	"work derived from an":                  21,
 }
 
 var enIndex = []uint32{ // 54 elements

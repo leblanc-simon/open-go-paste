@@ -2,4 +2,5 @@
 /datas/*
 !/datas/.gitkeep
 /release/open-go-paste-*.tar.bz2
+/release/*.*.*
 /server/open-go-paste
