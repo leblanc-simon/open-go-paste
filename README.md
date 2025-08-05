@@ -1,7 +1,7 @@
 # OpenGoPaste
 
 <p align="center">
-    <img src="https://leblanc.io/logo-open-go-paste.svg" width="200" height="200" title="OpenGoPaste Logo">
+    <img src="assets/img/logo.svg" width="200" height="200" title="OpenGoPaste Logo">
 </p>
 
 ## Installation
