@@ -1,12 +1,12 @@
 package main
 
 import (
-    "fmt"
-    "net/http"
-    "regexp"
-    "strconv"
+	"fmt"
+	"net/http"
+	"regexp"
+	"strconv"
 
-    "github.com/gorilla/mux"
+	"github.com/gorilla/mux"
 )
 
 var errorView *View
@@ -29,11 +29,11 @@ func ErrorHandler(w http.ResponseWriter, error string, code int) {
     var errorData ErrorData
     errorData.Message = error
 
-    if (400 == code) {
+    if code == 400 {
         errorData.Title = locale.t("400 Bad Request")
-    } else if (404 == code) {
+    } else if code == 404 {
         errorData.Title = locale.t("404 Not Found")
-    } else if (405 == code) {
+    } else if code == 405 {
         errorData.Title = locale.t("405 Method Not Allowed")
     }
 
@@ -65,9 +65,11 @@ func IndexController(w http.ResponseWriter, r *http.Request) {
 
 func IsValidUserAgent(r *http.Request) bool {
     userAgent := r.UserAgent()
-    match, _ := regexp.MatchString("^Mozilla/", userAgent)
+    matchMozilla, _ := regexp.MatchString("^Mozilla/", userAgent)
+    matchBot, _ := regexp.MatchString("http", userAgent)
+    matchFuckingStupidMicrosoft, _ := regexp.MatchString("SkypeUriPreview", userAgent)
 
-    return match
+    return matchMozilla && !matchBot && !matchFuckingStupidMicrosoft
 }
 
 func GetPasteController(w http.ResponseWriter, r *http.Request) {
@@ -104,19 +106,19 @@ func PostPasteController(w http.ResponseWriter, r *http.Request) {
     }
 
     var structMaxTime MaxTime
-    if (false == structMaxTime.HasAllowed(pasteMaxTime)) {
+    if !structMaxTime.HasAllowed(pasteMaxTime) {
         ErrorHandler(w, locale.t("this max_time value is not allowed"), http.StatusBadRequest)
         return
     }
 
     var structPasteType PasteType
-    if (false == structPasteType.HasAllowed(pasteType)) {
+    if !structPasteType.HasAllowed(pasteType) {
         ErrorHandler(w, locale.t("this type value is not allowed"), http.StatusBadRequest)
         return
     }
 
     pasteId, err := CreatePaste(pasteContent, pasteType, pasteMaxTime, pasteMaxRead)
-    if (nil != err) {
+    if nil != err {
         ErrorHandler(w, err.Error(), http.StatusBadRequest)
         return
     }
