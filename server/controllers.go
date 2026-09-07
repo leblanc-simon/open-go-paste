@@ -154,7 +154,11 @@ func PostPasteController(w http.ResponseWriter, r *http.Request) {
 
 	pasteId, err := CreatePaste(pasteContent, pasteType, pasteMaxTime, pasteMaxRead)
 	if nil != err {
-		ErrorHandler(w, locale, err.Error(), http.StatusBadRequest)
+		// Storage failures are ours, not the client's: never echo the raw error
+		// back, it carries the path of the paste on disk.
+		log.Printf("Fail to create paste: %s", err)
+		code := http.StatusInternalServerError
+		ErrorHandler(w, locale, http.StatusText(code), code)
 		return
 	}
 

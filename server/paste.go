@@ -4,15 +4,18 @@ import (
     "encoding/json"
     "errors"
     "fmt"
-    "io/ioutil"
+    "hash/fnv"
     "log"
     "os"
     "path/filepath"
+    "sync"
     "time"
 
     "github.com/google/uuid"
 )
 
+// pasteFolder is resolved once by InitPasteFolder: neither the environment nor
+// the working directory are expected to change while the server runs.
 var pasteFolder string
 
 var (
@@ -21,6 +24,22 @@ var (
     // ErrPasteExpired is returned when the paste is past its expiration date.
     ErrPasteExpired = errors.New("paste expired")
 )
+
+// pasteLocks serialises the read, increment and write cycle of ReadPaste. The
+// locks are sharded over a fixed table rather than allocated per identifier,
+// which would grow without bound; a collision between two identifiers only
+// costs a serialised write. This guards a single process, not several instances
+// sharing the same storage.
+const pasteLockCount = 256
+
+var pasteLocks [pasteLockCount]sync.Mutex
+
+func pasteLock(id string) *sync.Mutex {
+    hash := fnv.New32a()
+    hash.Write([]byte(id))
+
+    return &pasteLocks[hash.Sum32()%pasteLockCount]
+}
 
 type Paste struct {
     Id                  string    `json:"id"`
@@ -81,7 +100,9 @@ func (mt MaxTime) GetExpirationTime(wantedExpiration string) (time.Time, error) 
         return expirationDate, nil
     }
 
-    return expirationDate, nil
+    // Without this guard an unknown duration silently expires the paste at its
+    // creation. HasAllowed protects the controller, CreatePaste stays exported.
+    return expirationDate, fmt.Errorf("unknown expiration %q", wantedExpiration)
 }
 
 func (mt MaxTime) HasAllowed(maxTime string) bool {
@@ -125,18 +146,34 @@ func (pt PasteType) HasAllowed(pasteType string) bool {
     return false
 }
 
-func getPasteFolder() string {
+func resolvePasteFolder() string {
     envFolder := os.Getenv("OPEN_GO_PASTE_DATAS_FOLDER")
     if envFolder != "" {
         return envFolder
     }
 
-    cwd, _ := os.Getwd()
+    cwd, err := os.Getwd()
+    if nil != err {
+        log.Printf("Fail to get working directory: %s", err)
+        return filepath.Join("..", "datas")
+    }
+
     return filepath.Join(cwd, "..", "datas")
 }
 
+// getPasteFolder returns the folder resolved at startup. It falls back to
+// resolving it on the spot so that callers which skip InitPasteFolder, the tests
+// among them, still address the same storage.
+func getPasteFolder() string {
+    if "" == pasteFolder {
+        return resolvePasteFolder()
+    }
+
+    return pasteFolder
+}
+
 func InitPasteFolder() {
-    pasteFolder := getPasteFolder()
+    pasteFolder = resolvePasteFolder()
 
     if _, err := os.Stat(pasteFolder); os.IsNotExist(err) {
         log.Fatalf("Paste folder %s doesn't exist", pasteFolder)
@@ -180,6 +217,25 @@ func isPasteIsExpired(paste Paste) bool {
     return currentTime.After(paste.ExpireTime)
 }
 
+// isPasteFullyRead tells whether the allowed number of reads is exhausted. A
+// zero allowance means unlimited.
+func isPasteFullyRead(paste Paste) bool {
+    return paste.AllowedNumberOfRead > 0 && paste.NumberOfRead >= paste.AllowedNumberOfRead
+}
+
+func writePasteFile(paste Paste, pasteFilename string) error {
+    pasteJson, err := json.Marshal(paste)
+    if nil != err {
+        return fmt.Errorf("fail to serialize paste %s: %w", paste.Id, err)
+    }
+
+    if err := os.WriteFile(pasteFilename, pasteJson, 0600); nil != err {
+        return fmt.Errorf("fail to write file %s: %w", pasteFilename, err)
+    }
+
+    return nil
+}
+
 func CreatePaste(data string, pasteType string, finishTime string, numberOfRead int) (string, error) {
     var paste Paste
     var maxTime MaxTime
@@ -196,19 +252,18 @@ func CreatePaste(data string, pasteType string, finishTime string, numberOfRead 
         return "", err
     }
 
-    pasteJson, err := json.Marshal(paste)
-    if nil != err {
-        return "", err
-    }
-
     pasteFilename := generatePasteFilename(paste.Id)
     pasteDirectory := filepath.Dir(pasteFilename)
 
-    if _, err := os.Stat(pasteDirectory); os.IsNotExist(err) {
-        os.MkdirAll(pasteDirectory, os.ModePerm)
+    if err := os.MkdirAll(pasteDirectory, 0700); nil != err {
+        return "", fmt.Errorf("fail to create directory %s: %w", pasteDirectory, err)
     }
 
-    ioutil.WriteFile(pasteFilename, pasteJson, 0600)
+    // The caller must never receive an identifier that points to nothing: a dead
+    // link is indistinguishable from an expired paste for the user.
+    if err := writePasteFile(paste, pasteFilename); nil != err {
+        return "", err
+    }
 
     return paste.Id, nil
 }
@@ -220,25 +275,40 @@ func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
         return paste, ErrPasteNotFound
     }
 
-    if !isPasteFileExist(id) {
-        return paste, ErrPasteNotFound
-    }
-
     pasteFilename := generatePasteFilename(id)
 
-    pasteJson, err := ioutil.ReadFile(pasteFilename)
+    // The read, increment and write cycle has to be atomic: two concurrent
+    // requests on a paste allowed a single read would otherwise both see
+    // NumberOfRead at 0 and both get served.
+    lock := pasteLock(id)
+    lock.Lock()
+    defer lock.Unlock()
+
+    pasteJson, err := os.ReadFile(pasteFilename)
     if nil != err {
+        if os.IsNotExist(err) {
+            return paste, ErrPasteNotFound
+        }
+
         return paste, fmt.Errorf("fail to read file %s: %w", pasteFilename, err)
     }
 
-    json.Unmarshal(pasteJson, &paste)
+    // A corrupted file used to yield a zeroed Paste, therefore "expired",
+    // therefore a misleading 404.
+    if err := json.Unmarshal(pasteJson, &paste); nil != err {
+        return paste, fmt.Errorf("fail to parse file %s: %w", pasteFilename, err)
+    }
 
     if isValidUserAgent {
         // Increment number of read only if we have a valid user-agent
         paste.NumberOfRead = paste.NumberOfRead + 1
     }
 
-    deleteIfNecessary(paste, pasteFilename)
+    if err := deleteIfNecessary(paste, pasteFilename, isValidUserAgent); nil != err {
+        // Serving a paste whose counter could not be persisted would grant
+        // unlimited reads on a paste meant to be destroyed.
+        return paste, err
+    }
 
     if isPasteIsExpired(paste) {
         return paste, ErrPasteExpired
@@ -247,40 +317,46 @@ func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
     return paste, nil
 }
 
-func deleteIfNecessary(paste Paste, pasteFilename string) {
-    if paste.AllowedNumberOfRead > 0 && paste.NumberOfRead >= paste.AllowedNumberOfRead {
-        removePasteFile(pasteFilename)
+// deleteIfNecessary applies the outcome of a read: an expired or fully read
+// paste is destroyed, otherwise the updated counter is written back. Never both,
+// where the previous version relied on removePasteFile having pruned the parent
+// directories to make the unconditional rewrite fail. And nothing at all when
+// the counter did not move, which used to rewrite every valid paste on each
+// nightly pass.
+func deleteIfNecessary(paste Paste, pasteFilename string, counterChanged bool) error {
+    if isPasteIsExpired(paste) || isPasteFullyRead(paste) {
+        return removePasteFile(pasteFilename)
     }
 
-    if isPasteIsExpired(paste) {
-        removePasteFile(pasteFilename)
+    if !counterChanged {
+        return nil
     }
 
-    pasteJson, err := json.Marshal(paste)
-    if nil != err {
-        // TODO: Process error
-    }
-    ioutil.WriteFile(pasteFilename, pasteJson, 0600)
+    return writePasteFile(paste, pasteFilename)
 }
 
-func removePasteFile(pasteFilename string) {
-    if _, err := os.Stat(pasteFilename); os.IsNotExist(err) {
-        return
+func removePasteFile(pasteFilename string) error {
+    if err := os.Remove(pasteFilename); nil != err {
+        if os.IsNotExist(err) {
+            return nil
+        }
+
+        return fmt.Errorf("fail to remove file %s: %w", pasteFilename, err)
     }
 
+    // Prune the now empty directories of the storage tree. os.Remove stops at
+    // the first one still holding another paste, which is the expected end.
     pasteFolder := getPasteFolder()
     pathToRemove := pasteFilename
-
-    os.Remove(pasteFilename)
 
     for {
         pathToRemove = filepath.Dir(pathToRemove)
         if pasteFolder == pathToRemove {
-            return
+            return nil
         }
-        err := os.Remove(pathToRemove)
-        if nil != err {
-            return
+
+        if err := os.Remove(pathToRemove); nil != err {
+            return nil
         }
     }
 }

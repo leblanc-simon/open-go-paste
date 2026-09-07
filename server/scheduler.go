@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
-
+	"errors"
+	"fmt"
+	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
@@ -12,31 +14,56 @@ import (
 )
 
 func cleanDatas() error {
-    err := filepath.Walk(getPasteFolder(), func(path string, info os.FileInfo, err error) error {
-        if err != nil {
-            log.Println(err)
-            return err
-        }
+    pasteFolder := getPasteFolder()
 
-        if info.IsDir() {
+    if _, err := os.Stat(pasteFolder); err != nil {
+        return fmt.Errorf("fail to open paste folder %s: %w", pasteFolder, err)
+    }
+
+    // Collect first, check afterwards: ReadPaste deletes expired pastes and
+    // prunes their parent directories, mutating the tree the walk is still
+    // traversing.
+    var pasteIds []string
+
+    err := filepath.WalkDir(pasteFolder, func(path string, entry fs.DirEntry, err error) error {
+        if err != nil {
+            // A single unreadable entry must not abort the whole pass.
+            log.Printf("[SCHEDULER] Skip %s : %s\n", path, err)
             return nil
         }
 
-        log.Printf("[SCHEDULER] Check paste :%s\n", info.Name())
-
-        if !isValidUUID(info.Name()) {
+        if entry.IsDir() || !isValidUUID(entry.Name()) {
             return nil
         }
 
-        _, err = ReadPaste(info.Name(), false)
-        if err != nil {
-            log.Printf("[SCHEDULER] Paste \"%s\" deleted\n", info.Name())
-        }
+        pasteIds = append(pasteIds, entry.Name())
 
         return nil
     })
 
-    return err
+    if err != nil {
+        return fmt.Errorf("fail to walk paste folder %s: %w", pasteFolder, err)
+    }
+
+    for _, pasteId := range pasteIds {
+        log.Printf("[SCHEDULER] Check paste :%s\n", pasteId)
+
+        // Still valid pastes are left untouched: the read counter does not move
+        // for an invalid user-agent, so nothing is rewritten.
+        _, err := ReadPaste(pasteId, false)
+        if err == nil {
+            continue
+        }
+
+        if errors.Is(err, ErrPasteExpired) || errors.Is(err, ErrPasteNotFound) {
+            log.Printf("[SCHEDULER] Paste \"%s\" deleted\n", pasteId)
+            continue
+        }
+
+        log.Printf("[SCHEDULER] Fail to check paste \"%s\" : %s\n", pasteId, err)
+    }
+
+    return nil
 }
 
 func InitScheduler() error {
