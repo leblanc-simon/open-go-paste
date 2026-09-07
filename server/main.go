@@ -1,6 +1,7 @@
 package main
 
 import (
+    "log"
     "net/http"
 
     "github.com/gorilla/mux"
@@ -20,5 +21,7 @@ func main() {
 
     r.NotFoundHandler = http.HandlerFunc(NotFoundController)
 
-    RunServer(r)
+    if err := RunServer(r); nil != err {
+        log.Fatalf("Server stopped: %s", err)
+    }
 }
