@@ -62,7 +62,7 @@ main {
     flex: 1;
 }
 
-#link, .paste-information {
+#link, .paste-information, #paste-error {
     display: flex;
     flex-wrap: wrap;
     position: absolute;
@@ -79,6 +79,12 @@ main {
     border: 1px solid var(--primary-action-background-color);
 }
 
+#paste-error {
+    color: var(--error-text-color, var(--primary-action-text-color));
+    background-color: var(--error-background-color, #a3241c);
+    border-color: var(--error-background-color, #a3241c);
+}
+
 #link a, #link a:hover, #link a:visited {
     color: inherit;
     text-decoration: none;
@@ -88,7 +94,7 @@ main {
     text-decoration: underline;
 }
 
-#link.show, .paste-information.show {
+#link.show, .paste-information.show, #paste-error.show {
     position: relative;
     visibility: visible;
     opacity: 1;

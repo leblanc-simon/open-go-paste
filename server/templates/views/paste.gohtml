@@ -25,7 +25,7 @@
 
 {{- define "javascripts" -}}
     {{- if or (eq .Type "code") (eq .Type "markdown") -}}
-    <script src="/static/js/highlight.pack.js"></script>
+    <script src="/static/js/highlight.min.js"></script>
     {{- end -}}
     {{- if eq .Type "markdown" -}}
     <script src="/static/js/showdown.min.js"></script>

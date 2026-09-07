@@ -1,0 +1,19 @@
+{
+  "name": "open-go-paste",
+  "version": "1.1.1",
+  "private": true,
+  "description": "Front end dependencies of OpenGoPaste. The bundles are committed under assets/js, this file is what makes their versions visible to a dependency scanner.",
+  "license": "WTFPL",
+  "type": "module",
+  "scripts": {
+    "vendor": "release/vendor-assets.sh",
+    "test": "node --test \"tests/*.test.js\""
+  },
+  "dependencies": {
+    "highlight.js": "11.11.1",
+    "showdown": "2.1.0"
+  },
+  "devDependencies": {
+    "jsdom": "^26.0.0"
+  }
+}
