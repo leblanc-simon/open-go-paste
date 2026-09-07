@@ -1,16 +1,23 @@
 package main
 
 import (
+  "embed"
   "html/template"
+  "io/fs"
   "net/http"
-  "path/filepath"
   "os"
 )
 
 var LayoutDir string = "templates"
 
+// templatesFS carries the views inside the binary, so the server no longer has
+// to be started from the directory holding them.
+//
+//go:embed templates
+var templatesFS embed.FS
+
 func layoutFiles() []string {
-  files, err := filepath.Glob(LayoutDir + "/*.gohtml")
+  files, err := fs.Glob(templatesFS, LayoutDir + "/*.gohtml")
   if err != nil {
     panic(err)
   }
@@ -28,7 +35,7 @@ func NewView(layout string, files ...string) *View {
         },
     })
 
-    t, err := t.ParseFiles(files...)
+    t, err := t.ParseFS(templatesFS, files...)
     if err != nil {
         panic(err)
     }

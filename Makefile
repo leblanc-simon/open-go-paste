@@ -11,14 +11,14 @@ $(OUTDIR):
 	mkdir -p $(OUTDIR)
 
 debug: ## Build a debug version
-	cd $(CURRENT_DIR)/server; go build -o open-go-paste *.go
+	cd $(CURRENT_DIR)/server; go build -o open-go-paste .
 
 prod: $(OUTDIR) ## Build a production version
-	cd $(CURRENT_DIR)/server; go build -ldflags "-s -w" -o $(OUTDIR)/server/open-go-paste *.go
+	cd $(CURRENT_DIR)/server; go build -ldflags "-s -w" -o $(OUTDIR)/server/open-go-paste .
 
+# The templates and the assets are embedded in the binary, only the paste
+# storage has to be shipped alongside it.
 release: prod ## Generate a production release
-	cp -pR $(CURRENT_DIR)/server/templates $(OUTDIR)/server/templates
-	cp -pR $(CURRENT_DIR)/assets $(OUTDIR)/assets
 	mkdir -p $(OUTDIR)/datas
 	tar -cjf $(OUTDIR)/../open-go-paste-$(VERSION).tar.bz2 -C $(OUTDIR) .
 	rm -fr $(OUTDIR) || true
