@@ -205,6 +205,13 @@
             "fuzzy": true
         },
         {
+            "id": "This paste could not be saved. Please try again.",
+            "message": "This paste could not be saved. Please try again.",
+            "translation": "This paste could not be saved. Please try again.",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        },
+        {
             "id": "Expire in",
             "message": "Expire in",
             "translation": "Expire in",
@@ -348,43 +355,6 @@
             "id": "markdown",
             "message": "markdown",
             "translation": "markdown",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "This paste doesn't exist",
-            "message": "This paste doesn't exist",
-            "translation": "This paste doesn't exist",
-            "translatorComment": "Copied from source.",
-            "fuzzy": true
-        },
-        {
-            "id": "Fail to read file {Arg_1} : {Arg_2}",
-            "message": "Fail to read file {Arg_1} : {Arg_2}",
-            "translation": "Fail to read file {Arg_1} : {Arg_2}",
-            "translatorComment": "Copied from source.",
-            "placeholders": [
-                {
-                    "id": "Arg_1",
-                    "string": "%[1]s",
-                    "type": "",
-                    "underlyingType": "string",
-                    "argNum": 1
-                },
-                {
-                    "id": "Arg_2",
-                    "string": "%[2]s",
-                    "type": "",
-                    "underlyingType": "string",
-                    "argNum": 2
-                }
-            ],
-            "fuzzy": true
-        },
-        {
-            "id": "This paste doesn't exist or is expired",
-            "message": "This paste doesn't exist or is expired",
-            "translation": "This paste doesn't exist or is expired",
             "translatorComment": "Copied from source.",
             "fuzzy": true
         }

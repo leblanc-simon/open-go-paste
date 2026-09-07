@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 echo "package main" > ../server/fake-trans.go
-echo "func FakeTrans () {" >> ../server/fake-trans.go
+echo "func FakeTrans (locale *Locale) {" >> ../server/fake-trans.go
 
 cat ../server/templates/views/*.gohtml \
     | grep -Ee '\{\{ *trans "([^"]+)" *\}\}' \

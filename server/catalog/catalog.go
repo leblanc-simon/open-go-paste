@@ -39,62 +39,60 @@ func init() {
 }
 
 var messageKeyToIndex = map[string]int{
-	"1 day":                  43,
-	"1 hour":                 42,
-	"1 month":                45,
-	"1 week":                 44,
-	"1 year":                 46,
-	"10 minutes":             41,
+	"1 day":                  44,
+	"1 hour":                 43,
+	"1 month":                46,
+	"1 week":                 45,
+	"1 year":                 47,
+	"10 minutes":             42,
 	"400 Bad Request":        0,
 	"404 Not Found":          1,
 	"405 Method Not Allowed": 2,
-	"5 minutes":              40,
+	"5 minutes":              41,
 	"All texts added via OpenGoPaste are encrypted in AES 256 by the browser before being sent to the server so that only the author of these lines and the recipient(s) can access the content.": 9,
 	"Alternative official logo source code":     19,
-	"As for GoFast, it is better to be hidden!": 38,
+	"As for GoFast, it is better to be hidden!": 39,
 	"Code is under license":                     14,
-	"Content":                                   32,
+	"Content":                                   33,
 	"Copy link and send it.":                    27,
-	"Create a new paste":                        37,
+	"Create a new paste":                        38,
 	"Development and design":                    11,
 	"Download original work":                    22,
-	"Expire in":                                 29,
-	"Fail to read file %s : %s":                 51,
-	"Format":                                    30,
+	"Expire in":                                 30,
+	"Format":                                    31,
 	"Icon and logo":                             12,
 	"Invalid paste content":                     4,
 	"Link has been copied !":                    28,
 	"Logos are under license":                   15,
-	"Maximum read allowed":                      31,
+	"Maximum read allowed":                      32,
 	"Official logo source code":                 18,
 	"OpenGoPaste build by:":                     10,
 	"OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.": 8,
 	"OpenGoPaste is free software.": 13,
-	"Save":                          33,
+	"Save":                          34,
 	"Show source code":              16,
 	"Software source code":          17,
-	"This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.": 34,
-	"This message can be viewed up to §dateAvailable§ at §hourAvailable§.":                                  35,
-	"This message is available for the last time. You will not be able to consult it later.":                36,
-	"This paste doesn't exist":               50,
-	"This paste doesn't exist or is expired": 52,
-	"Unofficial logo source code":            20,
-	"and finally continue by":                26,
-	"code":                                   48,
-	"is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.": 39,
-	"markdown":                              49,
+	"This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.": 35,
+	"This message can be viewed up to §dateAvailable§ at §hourAvailable§.":                                  36,
+	"This message is available for the last time. You will not be able to consult it later.":                37,
+	"This paste could not be saved. Please try again.":                                                      29,
+	"Unofficial logo source code": 20,
+	"and finally continue by":     26,
+	"code":                        49,
+	"is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent.": 40,
+	"markdown":                              50,
 	"max_read value must be a positive int": 5,
 	"modified by":                           25,
 	"of":                                    24,
 	"original creation":                     23,
-	"text":                                  47,
+	"text":                                  48,
 	"this max_time value is not allowed":    6,
 	"this paste is not found":               3,
 	"this type value is not allowed":        7,
 	"work derived from an":                  21,
 }
 
-var enIndex = []uint32{ // 54 elements
+var enIndex = []uint32{ // 52 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000010, 0x0000001e, 0x00000035,
 	0x0000004d, 0x00000063, 0x00000089, 0x000000ac,
@@ -103,17 +101,16 @@ var enIndex = []uint32{ // 54 elements
 	0x00000274, 0x00000285, 0x0000029a, 0x000002b4,
 	0x000002da, 0x000002f6, 0x0000030b, 0x00000322,
 	0x00000334, 0x00000337, 0x00000343, 0x0000035b,
-	0x00000372, 0x00000389, 0x00000393, 0x0000039a,
+	0x00000372, 0x00000389, 0x000003ba, 0x000003c4,
 	// Entry 20 - 3F
-	0x000003af, 0x000003b7, 0x000003bc, 0x00000428,
-	0x00000471, 0x000004c8, 0x000004db, 0x00000505,
-	0x000005fa, 0x00000604, 0x0000060f, 0x00000616,
-	0x0000061c, 0x00000623, 0x0000062b, 0x00000632,
-	0x00000637, 0x0000063c, 0x00000645, 0x0000065e,
-	0x0000067e, 0x000006a5,
-} // Size: 240 bytes
+	0x000003cb, 0x000003e0, 0x000003e8, 0x000003ed,
+	0x00000459, 0x000004a2, 0x000004f9, 0x0000050c,
+	0x00000536, 0x0000062b, 0x00000635, 0x00000640,
+	0x00000647, 0x0000064d, 0x00000654, 0x0000065c,
+	0x00000663, 0x00000668, 0x0000066d, 0x00000676,
+} // Size: 232 bytes
 
-const enData string = "" + // Size: 1701 bytes
+const enData string = "" + // Size: 1654 bytes
 	"\x02400 Bad Request\x02404 Not Found\x02405 Method Not Allowed\x02this p" +
 	"aste is not found\x02Invalid paste content\x02max_read value must be a p" +
 	"ositive int\x02this max_time value is not allowed\x02this type value is " +
@@ -127,21 +124,20 @@ const enData string = "" + // Size: 1701 bytes
 	"de\x02Official logo source code\x02Alternative official logo source code" +
 	"\x02Unofficial logo source code\x02work derived from an\x02Download orig" +
 	"inal work\x02original creation\x02of\x02modified by\x02and finally conti" +
-	"nue by\x02Copy link and send it.\x02Link has been copied !\x02Expire in" +
-	"\x02Format\x02Maximum read allowed\x02Content\x02Save\x02This message ca" +
-	"n be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §h" +
-	"ourAvailable§.\x02This message can be viewed up to §dateAvailable§ at §h" +
-	"ourAvailable§.\x02This message is available for the last time. You will " +
-	"not be able to consult it later.\x02Create a new paste\x02As for GoFast," +
-	" it is better to be hidden!\x02is a text and source code management serv" +
-	"ice. The data sent by this service are known only by you and the recipie" +
-	"nt (s) of the link because they are encrypted and decrypted by the brows" +
-	"er. At no time does the service know the data that is sent.\x025 minutes" +
-	"\x0210 minutes\x021 hour\x021 day\x021 week\x021 month\x021 year\x02text" +
-	"\x02code\x02markdown\x02This paste doesn't exist\x02Fail to read file %[" +
-	"1]s : %[2]s\x02This paste doesn't exist or is expired"
+	"nue by\x02Copy link and send it.\x02Link has been copied !\x02This paste" +
+	" could not be saved. Please try again.\x02Expire in\x02Format\x02Maximum" +
+	" read allowed\x02Content\x02Save\x02This message can be viewed again §nB" +
+	"AvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.\x02Thi" +
+	"s message can be viewed up to §dateAvailable§ at §hourAvailable§.\x02Thi" +
+	"s message is available for the last time. You will not be able to consul" +
+	"t it later.\x02Create a new paste\x02As for GoFast, it is better to be h" +
+	"idden!\x02is a text and source code management service. The data sent by" +
+	" this service are known only by you and the recipient (s) of the link be" +
+	"cause they are encrypted and decrypted by the browser. At no time does t" +
+	"he service know the data that is sent.\x025 minutes\x0210 minutes\x021 h" +
+	"our\x021 day\x021 week\x021 month\x021 year\x02text\x02code\x02markdown"
 
-var frIndex = []uint32{ // 54 elements
+var frIndex = []uint32{ // 52 elements
 	// Entry 0 - 1F
 	0x00000000, 0x00000016, 0x0000002c, 0x00000048,
 	0x00000069, 0x0000007a, 0x000000ad, 0x000000d8,
@@ -150,17 +146,16 @@ var frIndex = []uint32{ // 54 elements
 	0x0000030e, 0x00000322, 0x0000033a, 0x00000352,
 	0x00000371, 0x0000038a, 0x000003a1, 0x000003c6,
 	0x000003da, 0x000003dd, 0x000003ea, 0x000003fe,
-	0x0000041c, 0x00000435, 0x00000441, 0x00000448,
+	0x0000041c, 0x00000435, 0x00000473, 0x0000047f,
 	// Entry 20 - 3F
-	0x00000462, 0x0000046a, 0x00000476, 0x000004ec,
-	0x0000053f, 0x000005a1, 0x000005b9, 0x000005f4,
-	0x00000723, 0x0000072d, 0x00000738, 0x00000740,
-	0x00000747, 0x00000751, 0x00000758, 0x0000075d,
-	0x00000763, 0x00000768, 0x00000771, 0x00000789,
-	0x000007b9, 0x000007de,
-} // Size: 240 bytes
+	0x00000486, 0x000004a0, 0x000004a8, 0x000004b4,
+	0x0000052a, 0x0000057d, 0x000005df, 0x000005f7,
+	0x00000632, 0x00000761, 0x0000076b, 0x00000776,
+	0x0000077e, 0x00000785, 0x0000078f, 0x00000796,
+	0x0000079b, 0x000007a1, 0x000007a6, 0x000007af,
+} // Size: 232 bytes
 
-const frData string = "" + // Size: 2014 bytes
+const frData string = "" + // Size: 1967 bytes
 	"\x02400 Mauvaise requête\x02404 Page non trouvée\x02405 Méthode non auto" +
 	"risée\x02Ce contenu n'a pas été trouvé\x02Contenu invalide\x02La valeur " +
 	"de max_read doit être un entier positif\x02La valeur de max_time n'est p" +
@@ -176,20 +171,19 @@ const frData string = "" + // Size: 2014 bytes
 	"ce du logo officiel\x02Source du second logo officiel\x02Source du logo " +
 	"officieux\x02œuvre dérivée d'une\x02Télécharger la création originale" +
 	"\x02création originale\x02de\x02modifié par\x02et enfin repris par\x02Co" +
-	"pier le lien et envoyer le.\x02Le lien a été copié !\x02Expire dans\x02F" +
-	"ormat\x02Nombre de lecture maximum\x02Contenu\x02Enregistrer\x02Ce messa" +
-	"ge pourra être consulté encore §nbAvailableRead§ fois ou jusqu'au §dateA" +
-	"vailable§ à §hourAvailable§.\x02Ce message pourra être consulté jusqu'au" +
-	" §dateAvailable§ à §hourAvailable§.\x02Ce message est disponible pour la" +
-	" dernière fois. Vous ne pourrez plus le consulter par la suite.\x02Créer" +
-	" un nouveau paste\x02Comme pour le GoFast, il est préférable d'être cach" +
-	"é !\x02est un service de gestion d'extraits de texte et de code source." +
-	" Les données envoyées par ce service ne sont connues que par vous seul e" +
-	"t le(s) destinataire(s) du lien car elles sont chiffrées et déchiffrées " +
-	"par le navigateur. À aucun moment le service ne connait les données qui " +
-	"sont envoyées.\x025 minutes\x0210 minutes\x021 heure\x021 jour\x021 sema" +
-	"ine\x021 mois\x021 an\x02Texte\x02Code\x02Markdown\x02Ce contenu n'exist" +
-	"e pas\x02Erreur dans la lecture du fichier %[1]s : %[2]s\x02Ce contenu n" +
-	"'existe pas ou a expiré"
+	"pier le lien et envoyer le.\x02Le lien a été copié !\x02Ce contenu n'a p" +
+	"as pu être enregistré. Veuillez réessayer.\x02Expire dans\x02Format\x02N" +
+	"ombre de lecture maximum\x02Contenu\x02Enregistrer\x02Ce message pourra " +
+	"être consulté encore §nbAvailableRead§ fois ou jusqu'au §dateAvailable§" +
+	" à §hourAvailable§.\x02Ce message pourra être consulté jusqu'au §dateAva" +
+	"ilable§ à §hourAvailable§.\x02Ce message est disponible pour la dernière" +
+	" fois. Vous ne pourrez plus le consulter par la suite.\x02Créer un nouve" +
+	"au paste\x02Comme pour le GoFast, il est préférable d'être caché !\x02es" +
+	"t un service de gestion d'extraits de texte et de code source. Les donné" +
+	"es envoyées par ce service ne sont connues que par vous seul et le(s) de" +
+	"stinataire(s) du lien car elles sont chiffrées et déchiffrées par le nav" +
+	"igateur. À aucun moment le service ne connait les données qui sont envoy" +
+	"ées.\x025 minutes\x0210 minutes\x021 heure\x021 jour\x021 semaine\x021 " +
+	"mois\x021 an\x02Texte\x02Code\x02Markdown"
 
-	// Total table size 4195 bytes (4KiB); checksum: 21CFDA47
+	// Total table size 4085 bytes (3KiB); checksum: 6FD54D17

@@ -15,6 +15,13 @@ import (
 
 var pasteFolder string
 
+var (
+    // ErrPasteNotFound is returned when the identifier matches no stored paste.
+    ErrPasteNotFound = errors.New("paste not found")
+    // ErrPasteExpired is returned when the paste is past its expiration date.
+    ErrPasteExpired = errors.New("paste expired")
+)
+
 type Paste struct {
     Id                  string    `json:"id"`
     ExpireTime          time.Time `json:"expire"`
@@ -33,7 +40,11 @@ type DurationTime struct {
 type MaxTime struct {
 }
 
-func (mt MaxTime) GetAllowed() []DurationTime {
+// allowedDurations is the source of truth for validation. GetAllowed keeps the
+// literal strings inline so gotext can still extract them.
+var allowedDurations = []string{"5m", "10m", "1h", "1D", "1W", "1M", "1Y"}
+
+func (mt MaxTime) GetAllowed(locale *Locale) []DurationTime {
     maxTimes := []DurationTime{}
     maxTimes = append(maxTimes, DurationTime{DurationString: "5m", Label: locale.t("5 minutes"), Default: false})
     maxTimes = append(maxTimes, DurationTime{DurationString: "10m", Label: locale.t("10 minutes"), Default: false})
@@ -74,8 +85,8 @@ func (mt MaxTime) GetExpirationTime(wantedExpiration string) (time.Time, error) 
 }
 
 func (mt MaxTime) HasAllowed(maxTime string) bool {
-    for _, a := range mt.GetAllowed() {
-        if a.DurationString == maxTime {
+    for _, allowed := range allowedDurations {
+        if allowed == maxTime {
             return true
         }
     }
@@ -92,7 +103,11 @@ type PasteTypeStruct struct {
 type PasteType struct {
 }
 
-func (pt PasteType) GetAllowed() []PasteTypeStruct {
+// allowedPasteTypes is the source of truth for validation. GetAllowed keeps the
+// literal strings inline so gotext can still extract them.
+var allowedPasteTypes = []string{"text", "code", "markdown"}
+
+func (pt PasteType) GetAllowed(locale *Locale) []PasteTypeStruct {
     types := []PasteTypeStruct{}
     types = append(types, PasteTypeStruct{Value: "text", Label: locale.t("text"), Default: true})
     types = append(types, PasteTypeStruct{Value: "code", Label: locale.t("code"), Default: false})
@@ -101,8 +116,8 @@ func (pt PasteType) GetAllowed() []PasteTypeStruct {
 }
 
 func (pt PasteType) HasAllowed(pasteType string) bool {
-    for _, a := range pt.GetAllowed() {
-        if a.Value == pasteType {
+    for _, allowed := range allowedPasteTypes {
+        if allowed == pasteType {
             return true
         }
     }
@@ -202,18 +217,18 @@ func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
     var paste Paste
 
     if !isValidUUID(id) {
-        return paste, errors.New(locale.t("This paste doesn't exist"))
+        return paste, ErrPasteNotFound
     }
 
     if !isPasteFileExist(id) {
-        return paste, errors.New(locale.t("This paste doesn't exist"))
+        return paste, ErrPasteNotFound
     }
 
     pasteFilename := generatePasteFilename(id)
 
     pasteJson, err := ioutil.ReadFile(pasteFilename)
     if nil != err {
-        return paste, fmt.Errorf(locale.t("Fail to read file %s : %s"), pasteFilename, err)
+        return paste, fmt.Errorf("fail to read file %s: %w", pasteFilename, err)
     }
 
     json.Unmarshal(pasteJson, &paste)
@@ -226,7 +241,7 @@ func ReadPaste(id string, isValidUserAgent bool) (Paste, error) {
     deleteIfNecessary(paste, pasteFilename)
 
     if isPasteIsExpired(paste) {
-        return paste, errors.New(locale.t("This paste doesn't exist or is expired"))
+        return paste, ErrPasteExpired
     }
 
     return paste, nil

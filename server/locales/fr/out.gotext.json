@@ -147,6 +147,11 @@
             "translation": "Le lien a été copié !"
         },
         {
+            "id": "This paste could not be saved. Please try again.",
+            "message": "This paste could not be saved. Please try again.",
+            "translation": "Ce contenu n'a pas pu être enregistré. Veuillez réessayer."
+        },
+        {
             "id": "Expire in",
             "message": "Expire in",
             "translation": "Expire dans"
@@ -250,37 +255,6 @@
             "id": "markdown",
             "message": "markdown",
             "translation": "Markdown"
-        },
-        {
-            "id": "This paste doesn't exist",
-            "message": "This paste doesn't exist",
-            "translation": "Ce contenu n'existe pas"
-        },
-        {
-            "id": "Fail to read file {Arg_1} : {Arg_2}",
-            "message": "Fail to read file {Arg_1} : {Arg_2}",
-            "translation": "Erreur dans la lecture du fichier {Arg_1} : {Arg_2}",
-            "placeholders": [
-                {
-                    "id": "Arg_1",
-                    "string": "%[1]s",
-                    "type": "",
-                    "underlyingType": "string",
-                    "argNum": 1
-                },
-                {
-                    "id": "Arg_2",
-                    "string": "%[2]s",
-                    "type": "",
-                    "underlyingType": "string",
-                    "argNum": 2
-                }
-            ]
-        },
-        {
-            "id": "This paste doesn't exist or is expired",
-            "message": "This paste doesn't exist or is expired",
-            "translation": "Ce contenu n'existe pas ou a expiré"
         }
     ]
 }

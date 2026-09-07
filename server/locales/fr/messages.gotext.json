@@ -281,6 +281,11 @@
             "id": "This paste doesn't exist or is expired",
             "message": "This paste doesn't exist or is expired",
             "translation": "Ce contenu n'existe pas ou a expiré"
+        },
+        {
+            "id": "This paste could not be saved. Please try again.",
+            "message": "This paste could not be saved. Please try again.",
+            "translation": "Ce contenu n'a pas pu être enregistré. Veuillez réessayer."
         }
     ]
 }
