@@ -49,6 +49,8 @@ environment otherwise. `-c <path>` points at another file, and `./open-go-paste
 * Customize CSS : `OPEN_GO_PASTE_CUSTOM_CSS="/static/css/custom.css"`
 * Override the embedded assets : `OPEN_GO_PASTE_ASSETS_FOLDER=/var/open-go-paste/assets`
 * Customize clean datas CRON : `OPEN_GO_PASTE_CRON="0 0 0 * * *"` (CRON syntax with seconds)
+* Requests per minute per client : `OPEN_GO_PASTE_RATE_LIMIT=100` (`0` disables the quota)
+* Reverse proxy CIDRs : `OPEN_GO_PASTE_TRUSTED_PROXIES=10.0.0.0/8,192.168.0.0/16`
 * Log level : `OPEN_GO_PASTE_LOG_LEVEL=info` (`debug|info|warn|error`, defaults to `error`)
 * Log format : `OPEN_GO_PASTE_LOG_FORMAT=json` (`text|json`)
 * Include the source position in the logs : `OPEN_GO_PASTE_LOG_SOURCE=true`
@@ -67,6 +69,9 @@ The same settings in a `config.yaml`:
 web:
   host: 0.0.0.0
   port: 3000
+  rate_limit: 100
+  trusted_proxies:
+    - 10.0.0.0/8
 logging:
   level: info
   format: json
@@ -75,6 +80,19 @@ paste:
   custom_css: /static/css/custom.css
   cron: "0 0 0 * * *"
 ```
+
+### Rate limiting
+
+Creating a paste is anonymous and writes a file on disk, so a per-client quota
+(`OPEN_GO_PASTE_RATE_LIMIT`, 100 requests per minute by default) is what stands
+between a single client and a full storage. `/static/` is exempt: a page load
+pulls a dozen assets, and counting those would burn the budget within a few
+views. Over the quota, the answer is a `429` carrying `Retry-After`.
+
+`X-Forwarded-For` is only honoured when the connection itself comes from a CIDR
+listed in `OPEN_GO_PASTE_TRUSTED_PROXIES`, so a direct client cannot claim
+another address. An empty list means "no proxy": behind an undeclared reverse
+proxy, every client shares the quota of the proxy address.
 
 ### Custom CSS
 

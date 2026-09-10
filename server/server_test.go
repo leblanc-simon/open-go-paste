@@ -11,6 +11,7 @@ import (
     "testing"
 
     "github.com/gorilla/mux"
+    "leblanc.io/open-go-base/ratelimit"
 )
 
 func TestSecurityHeadersAreSetOnPages(t *testing.T) {
@@ -257,5 +258,70 @@ func TestLimitBodySizeLeavesAnAcceptableBodyAlone(t *testing.T) {
 
     if readBytes != 1024 {
         t.Errorf("got %d bytes read, want 1024", readBytes)
+    }
+}
+
+// Creating a paste is anonymous and writes a file on disk: a quota is the only
+// thing between a single client and a full storage.
+func TestLimitRequestRateRejectsPastTheQuota(t *testing.T) {
+    limiter, err := ratelimit.New(2, nil)
+    if nil != err {
+        t.Fatalf("fail to build the limiter: %s", err)
+    }
+
+    handler := limitRequestRate(limiter, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+
+    statuses := []int{}
+    for i := 0; i < 3; i++ {
+        recorder := httptest.NewRecorder()
+        handler.ServeHTTP(recorder, httptest.NewRequest(http.MethodPost, "/", nil))
+        statuses = append(statuses, recorder.Code)
+    }
+
+    want := []int{http.StatusOK, http.StatusOK, http.StatusTooManyRequests}
+
+    for i, status := range statuses {
+        if status != want[i] {
+            t.Errorf("request %d: got status %d, want %d", i+1, status, want[i])
+        }
+    }
+}
+
+// A page load pulls a dozen assets: counting those would burn a per-minute
+// budget meant for the pastes within a few views.
+func TestLimitRequestRateLeavesTheStaticAssetsAlone(t *testing.T) {
+    limiter, err := ratelimit.New(1, nil)
+    if nil != err {
+        t.Fatalf("fail to build the limiter: %s", err)
+    }
+
+    handler := limitRequestRate(limiter, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+
+    for i := 0; i < 5; i++ {
+        recorder := httptest.NewRecorder()
+        handler.ServeHTTP(recorder, httptest.NewRequest(http.MethodGet, "/static/js/app.js", nil))
+
+        if recorder.Code != http.StatusOK {
+            t.Fatalf("static asset %d: got status %d, want %d", i+1, recorder.Code, http.StatusOK)
+        }
+    }
+}
+
+// A misconfigured quota must not lock the whole service out.
+func TestAZeroQuotaDisablesTheLimiter(t *testing.T) {
+    limiter, err := ratelimit.New(0, nil)
+    if nil != err {
+        t.Fatalf("fail to build the limiter: %s", err)
+    }
+
+    handler := limitRequestRate(limiter, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+
+    for i := 0; i < 10; i++ {
+        recorder := httptest.NewRecorder()
+        handler.ServeHTTP(recorder, httptest.NewRequest(http.MethodPost, "/", nil))
+
+        if recorder.Code != http.StatusOK {
+            t.Fatalf("request %d: got status %d, want %d", i+1, recorder.Code, http.StatusOK)
+        }
     }
 }

@@ -13,6 +13,7 @@ import (
 
     "github.com/gorilla/mux"
     "leblanc.io/open-go-base/appconf"
+    "leblanc.io/open-go-base/ratelimit"
 )
 
 // assetsFS carries the stylesheets, scripts, fonts and images inside the binary.
@@ -129,6 +130,24 @@ func limitBodySize(next http.Handler) http.Handler {
     })
 }
 
+// limitRequestRate throttles everything but the static assets. Creating a paste
+// is anonymous and writes a file on disk, so nothing but a quota stops a single
+// client from filling the storage. A page load pulls a dozen assets along the
+// way, and counting those would burn a per-minute budget meant for the pastes
+// themselves within a few views.
+func limitRequestRate(limiter *ratelimit.Limiter, next http.Handler) http.Handler {
+    throttled := limiter.Middleware(next)
+
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        if strings.HasPrefix(r.URL.Path, "/static/") {
+            next.ServeHTTP(w, r)
+            return
+        }
+
+        throttled.ServeHTTP(w, r)
+    })
+}
+
 // styleSources allows the operator provided stylesheet when it is hosted
 // elsewhere, without opening style-src any wider.
 func styleSources() string {
@@ -196,18 +215,30 @@ func RunServer(r *mux.Router) error {
         slog.Info("assets folder takes precedence over the embedded ones", "folder", folder)
     }
 
+    limiter, err := ratelimit.New(config.Web.RateLimit, config.Web.TrustedProxies)
+    if nil != err {
+        // Only a malformed trusted proxy CIDR gets here, which is a
+        // configuration error: starting anyway would silently trust no proxy
+        // and rate limit every client behind it as one.
+        return err
+    }
+
+    // Security headers outermost, so a 429 carries them too; the quota is then
+    // spent before the body is read.
+    handler := securityHeaders(limitRequestRate(limiter, limitBodySize(r)))
+
     // Explicit timeouts: the zero values of ListenAndServe let a client hold a
     // connection open forever, which is all Slowloris needs.
     server := &http.Server{
         Addr:              address,
-        Handler:           securityHeaders(limitBodySize(r)),
+        Handler:           handler,
         ReadHeaderTimeout: 10 * time.Second,
         ReadTimeout:       30 * time.Second,
         WriteTimeout:      30 * time.Second,
         IdleTimeout:       120 * time.Second,
     }
 
-    slog.Info("running server", "address", address)
+    slog.Info("running server", "address", address, "rate_limit", config.Web.RateLimit)
 
     // ListenAndServe never returns a nil error. Ignoring it made the process
     // exit with a 0 status when the port was already taken.
