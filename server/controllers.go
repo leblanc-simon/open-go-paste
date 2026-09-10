@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -32,7 +32,7 @@ func InitTemplateViews() {
 // template itself fails. Render leaves the response untouched in that case.
 func render(w http.ResponseWriter, view *View, locale *Locale, data interface{}, code int) {
 	if err := view.Render(w, locale, data, code); nil != err {
-		log.Printf("Fail to render view: %s", err)
+		slog.Error("fail to render view", "err", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
 }
@@ -113,7 +113,7 @@ func GetPasteController(w http.ResponseWriter, r *http.Request) {
 	if nil != err {
 		// A missing or expired paste is the nominal case, only trace the rest.
 		if !errors.Is(err, ErrPasteNotFound) && !errors.Is(err, ErrPasteExpired) {
-			log.Printf("Fail to read paste: %s", err)
+			slog.Error("fail to read paste", "err", err)
 		}
 
 		ErrorHandler(w, locale, locale.t("this paste is not found"), http.StatusNotFound)
@@ -156,7 +156,7 @@ func PostPasteController(w http.ResponseWriter, r *http.Request) {
 	if nil != err {
 		// Storage failures are ours, not the client's: never echo the raw error
 		// back, it carries the path of the paste on disk.
-		log.Printf("Fail to create paste: %s", err)
+		slog.Error("fail to create paste", "err", err)
 		code := http.StatusInternalServerError
 		ErrorHandler(w, locale, http.StatusText(code), code)
 		return

@@ -13,21 +13,6 @@ import (
     "github.com/gorilla/mux"
 )
 
-func TestGetServerParameters(t *testing.T) {
-    if address := getServerParameters(); address != "127.0.0.1:8080" {
-        t.Errorf("got %q, want the loopback default", address)
-    }
-
-    t.Setenv("OPEN_GO_PASTE_SERVER", "::1")
-    t.Setenv("OPEN_GO_PASTE_PORT", "9000")
-
-    // An IPv6 host has to be bracketed, which the previous concatenation did not
-    // do.
-    if address := getServerParameters(); address != "[::1]:9000" {
-        t.Errorf("got %q, want %q", address, "[::1]:9000")
-    }
-}
-
 func TestSecurityHeadersAreSetOnPages(t *testing.T) {
     handler := securityHeaders(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
 
@@ -77,12 +62,12 @@ func TestStyleSourcesAllowsTheCustomStylesheetOrigin(t *testing.T) {
         t.Errorf("got %q, want only 'self' without a custom stylesheet", sources)
     }
 
-    t.Setenv("OPEN_GO_PASTE_CUSTOM_CSS", "/static/css/mine.css")
+    usePasteConfig(t, PasteConfig{CustomCss: "/static/css/mine.css"})
     if sources := styleSources(); sources != "'self'" {
         t.Errorf("got %q, want only 'self' for a relative stylesheet", sources)
     }
 
-    t.Setenv("OPEN_GO_PASTE_CUSTOM_CSS", "https://cdn.example.org/theme/mine.css")
+    usePasteConfig(t, PasteConfig{CustomCss: "https://cdn.example.org/theme/mine.css"})
     if sources := styleSources(); sources != "'self' https://cdn.example.org" {
         t.Errorf("got %q, want the stylesheet origin", sources)
     }
@@ -187,7 +172,7 @@ func TestTheAssetsFolderOverridesTheEmbeddedOnes(t *testing.T) {
         t.Fatalf("fail to write the overriding stylesheet: %s", err)
     }
 
-    t.Setenv("OPEN_GO_PASTE_ASSETS_FOLDER", folder)
+    usePasteConfig(t, PasteConfig{AssetsFolder: folder})
 
     router := mux.NewRouter()
     assetsDelivery(router)

@@ -39,14 +39,42 @@ be deployed on its own: the paste storage is the only thing it needs next to it.
 
 ### Options
 
-All options are managed by environment variables.
+Options come from `config.yaml` when that file sits next to the binary, from the
+environment otherwise. `-c <path>` points at another file, and `./open-go-paste
+--help` prints the authoritative list of the variables with their defaults.
 
-* Customize listen IP : `OPEN_GO_PASTE_SERVER=0.0.0.0`
+* Customize listen IP : `OPEN_GO_PASTE_HOST=0.0.0.0`
 * Customize listen port : `OPEN_GO_PASTE_PORT=3000`
 * Customize datas directory : `OPEN_GO_PASTE_DATAS_FOLDER=/var/open-go-paste/datas`
 * Customize CSS : `OPEN_GO_PASTE_CUSTOM_CSS="/static/css/custom.css"`
 * Override the embedded assets : `OPEN_GO_PASTE_ASSETS_FOLDER=/var/open-go-paste/assets`
 * Customize clean datas CRON : `OPEN_GO_PASTE_CRON="0 0 0 * * *"` (CRON syntax with seconds)
+* Log level : `OPEN_GO_PASTE_LOG_LEVEL=info` (`debug|info|warn|error`, defaults to `error`)
+* Log format : `OPEN_GO_PASTE_LOG_FORMAT=json` (`text|json`)
+* Include the source position in the logs : `OPEN_GO_PASTE_LOG_SOURCE=true`
+
+`OPEN_GO_PASTE_SERVER` was renamed `OPEN_GO_PASTE_HOST`. The old name still
+works and prints a deprecation notice; it will be dropped in the next major
+version.
+
+The default log level is `error`, so a healthy start is silent. Set
+`OPEN_GO_PASTE_LOG_LEVEL=info` to see the listen address, the resolved paste
+folder and the cleanup schedule.
+
+The same settings in a `config.yaml`:
+
+```yaml
+web:
+  host: 0.0.0.0
+  port: 3000
+logging:
+  level: info
+  format: json
+paste:
+  datas_folder: /var/open-go-paste/datas
+  custom_css: /static/css/custom.css
+  cron: "0 0 0 * * *"
+```
 
 ### Custom CSS
 

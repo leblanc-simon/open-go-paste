@@ -1,16 +1,15 @@
 package main
 
 import (
-	"bytes"
-	"context"
-	"errors"
-	"fmt"
-	"io/fs"
-	"log"
-	"os"
-	"path/filepath"
+    "context"
+    "errors"
+    "fmt"
+    "io/fs"
+    "log/slog"
+    "os"
+    "path/filepath"
 
-	"codnect.io/chrono"
+    "codnect.io/chrono"
 )
 
 func cleanDatas() error {
@@ -28,7 +27,7 @@ func cleanDatas() error {
     err := filepath.WalkDir(pasteFolder, func(path string, entry fs.DirEntry, err error) error {
         if err != nil {
             // A single unreadable entry must not abort the whole pass.
-            log.Printf("[SCHEDULER] Skip %s : %s\n", path, err)
+            slog.Warn("[SCHEDULER] skip entry", "path", path, "err", err)
             return nil
         }
 
@@ -46,7 +45,9 @@ func cleanDatas() error {
     }
 
     for _, pasteId := range pasteIds {
-        log.Printf("[SCHEDULER] Check paste :%s\n", pasteId)
+        // Debug and not info: one line per stored paste on every pass drowned
+        // the journal, and the identifier is half of a paste url.
+        slog.Debug("[SCHEDULER] check paste", "paste_id", pasteId)
 
         // Still valid pastes are left untouched: the read counter does not move
         // for an invalid user-agent, so nothing is rewritten.
@@ -56,41 +57,36 @@ func cleanDatas() error {
         }
 
         if errors.Is(err, ErrPasteExpired) || errors.Is(err, ErrPasteNotFound) {
-            log.Printf("[SCHEDULER] Paste \"%s\" deleted\n", pasteId)
+            slog.Debug("[SCHEDULER] paste deleted", "paste_id", pasteId)
             continue
         }
 
-        log.Printf("[SCHEDULER] Fail to check paste \"%s\" : %s\n", pasteId, err)
+        slog.Error("[SCHEDULER] fail to check paste", "paste_id", pasteId, "err", err)
     }
 
     return nil
 }
 
+// InitScheduler registers the nightly cleanup pass. chrono only schedules the
+// task, it does not block, so the caller keeps the error instead of dying in a
+// goroutine the way the previous log.Fatalln did.
 func InitScheduler() error {
-    defaultCron := "0 0 0 * * *"
-    envCron := os.Getenv("OPEN_GO_PASTE_CRON")
-    var cron bytes.Buffer
-    if envCron != "" {
-        cron.WriteString(envCron)
-    } else {
-        cron.WriteString(defaultCron)
-    }
+    cron := config.Paste.Cron
 
     taskScheduler := chrono.NewDefaultTaskScheduler()
 
     _, err := taskScheduler.ScheduleWithCron(func(ctx context.Context) {
-        err := cleanDatas()
-        if err != nil {
-            log.Println(err)
+        if err := cleanDatas(); nil != err {
+            slog.Error("[SCHEDULER] cleanDatas failed", "err", err)
         }
-    }, cron.String())
+    }, cron)
 
-    if err == nil {
-        log.Print("[SCHEDULER] cleanDatas has been scheduled : " + cron.String())
-    } else {
-        log.Print("[SCHEDULER] Fail to schedule cleanDatas : " + cron.String())
-        log.Fatalln(err)
+    if nil != err {
+        slog.Error("[SCHEDULER] fail to schedule cleanDatas", "cron", cron, "err", err)
+        return err
     }
 
-    return err
+    slog.Info("[SCHEDULER] cleanDatas has been scheduled", "cron", cron)
+
+    return nil
 }

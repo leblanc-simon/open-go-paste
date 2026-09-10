@@ -1,16 +1,24 @@
 package main
 
 import (
-    "log"
+    "log/slog"
     "net/http"
+    "os"
 
     "github.com/gorilla/mux"
 )
 
 func main() {
-    go InitScheduler()
+    LoadConfig()
     InitTemplateViews()
     InitPasteFolder()
+
+    // Scheduled synchronously: chrono only registers the task, it does not
+    // block. Started in a goroutine with its error dropped, a malformed cron
+    // expression left the service running with no cleanup pass at all.
+    if err := InitScheduler(); nil != err {
+        os.Exit(1)
+    }
 
     r := mux.NewRouter()
 
@@ -22,6 +30,7 @@ func main() {
     r.NotFoundHandler = http.HandlerFunc(NotFoundController)
 
     if err := RunServer(r); nil != err {
-        log.Fatalf("Server stopped: %s", err)
+        slog.Error("server stopped", "err", err)
+        os.Exit(1)
     }
 }

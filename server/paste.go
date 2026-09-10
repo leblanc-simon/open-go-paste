@@ -5,7 +5,7 @@ import (
     "errors"
     "fmt"
     "hash/fnv"
-    "log"
+    "log/slog"
     "os"
     "path/filepath"
     "sync"
@@ -147,14 +147,13 @@ func (pt PasteType) HasAllowed(pasteType string) bool {
 }
 
 func resolvePasteFolder() string {
-    envFolder := os.Getenv("OPEN_GO_PASTE_DATAS_FOLDER")
-    if envFolder != "" {
-        return envFolder
+    if configured := config.Paste.DatasFolder; "" != configured {
+        return configured
     }
 
     cwd, err := os.Getwd()
     if nil != err {
-        log.Printf("Fail to get working directory: %s", err)
+        slog.Error("fail to get working directory", "err", err)
         return filepath.Join("..", "datas")
     }
 
@@ -176,10 +175,13 @@ func InitPasteFolder() {
     pasteFolder = resolvePasteFolder()
 
     if _, err := os.Stat(pasteFolder); os.IsNotExist(err) {
-        log.Fatalf("Paste folder %s doesn't exist", pasteFolder)
+        // slog has no Fatal: the service cannot serve a single paste without
+        // its storage, so the exit stays here rather than being returned.
+        slog.Error("paste folder doesn't exist", "folder", pasteFolder)
+        os.Exit(1)
     }
 
-    log.Printf("Paste folder will be %s", pasteFolder)
+    slog.Info("paste folder resolved", "folder", pasteFolder)
 }
 
 func generatePasteId() string {
@@ -187,7 +189,9 @@ func generatePasteId() string {
         pasteUuid, _ := uuid.NewRandom()
         pasteId := pasteUuid.String()
         if !isPasteFileExist(pasteId) {
-            log.Printf("pasteId will be %s", pasteId)
+            // Debug and not info: the identifier is half of a paste url, it has
+            // no place in the journal an operator keeps by default.
+            slog.Debug("paste id generated", "paste_id", pasteId)
             return pasteId
         }
     }

@@ -5,9 +5,8 @@ import (
   "embed"
   "html/template"
   "io/fs"
-  "log"
+  "log/slog"
   "net/http"
-  "os"
 )
 
 var LayoutDir string = "templates"
@@ -76,7 +75,7 @@ func (v *View) Render(w http.ResponseWriter, locale *Locale, data interface{}, c
 
     renderData := RenderData{
         Data: data,
-        CustomCss: os.Getenv("OPEN_GO_PASTE_CUSTOM_CSS"),
+        CustomCss: config.Paste.CustomCss,
         Locale: locale,
     }
 
@@ -92,7 +91,7 @@ func (v *View) Render(w http.ResponseWriter, locale *Locale, data interface{}, c
 
     if _, err := body.WriteTo(w); err != nil {
         // The status code is already sent, tracing is all we can do here.
-        log.Printf("Fail to write response: %s", err)
+        slog.Error("fail to write response", "err", err)
     }
 
     return nil

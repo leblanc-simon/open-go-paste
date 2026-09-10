@@ -3,6 +3,11 @@ MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 CURRENT_DIR := $(patsubst %/,%,$(dir $(MKFILE_PATH)))
 OUTDIR := ${CURRENT_DIR}/release/${VERSION}
 
+# The version is compiled in, so --version reports the tag the binary was cut
+# from rather than the "develop" default.
+LDFLAGS := -X 'main.version=$(VERSION)'
+
+
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
@@ -11,10 +16,10 @@ $(OUTDIR):
 	mkdir -p $(OUTDIR)
 
 debug: ## Build a debug version
-	cd $(CURRENT_DIR)/server; go build -o open-go-paste .
+	cd $(CURRENT_DIR)/server; go build -ldflags "$(LDFLAGS)" -o open-go-paste .
 
 prod: $(OUTDIR) ## Build a production version
-	cd $(CURRENT_DIR)/server; go build -ldflags "-s -w" -o $(OUTDIR)/server/open-go-paste .
+	cd $(CURRENT_DIR)/server; go build -ldflags "-s -w $(LDFLAGS)" -o $(OUTDIR)/server/open-go-paste .
 
 # The templates and the assets are embedded in the binary, only the paste
 # storage has to be shipped alongside it.

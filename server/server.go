@@ -3,15 +3,16 @@ package main
 import (
     "embed"
     "io/fs"
-    "log"
+    "log/slog"
     "net"
     "net/http"
     "net/url"
-    "os"
+    "strconv"
     "strings"
     "time"
 
     "github.com/gorilla/mux"
+    "leblanc.io/open-go-base/appconf"
 )
 
 // assetsFS carries the stylesheets, scripts, fonts and images inside the binary.
@@ -35,18 +36,8 @@ const customCssName = "assets/css/custom.css"
 // spills to disk past 32 MB with no global ceiling at all.
 const maxRequestBytes = 4 << 20
 
-func getServerParameters() string {
-    server := os.Getenv("OPEN_GO_PASTE_SERVER")
-    if "" == server {
-        server = "127.0.0.1"
-    }
-
-    port := os.Getenv("OPEN_GO_PASTE_PORT")
-    if "" == port {
-        port = "8080"
-    }
-
-    return net.JoinHostPort(server, port)
+func getServerParameters(web appconf.Web) string {
+    return net.JoinHostPort(web.Host, strconv.Itoa(web.Port))
 }
 
 // overlayFileSystem serves the embedded assets, with a folder on disk taking
@@ -72,7 +63,7 @@ func (o overlayFileSystem) Open(name string) (http.File, error) {
 // assetsOverlay is the optional folder overriding the embedded assets, empty
 // when the operator did not configure one.
 func assetsOverlay() http.FileSystem {
-    folder := os.Getenv("OPEN_GO_PASTE_ASSETS_FOLDER")
+    folder := config.Paste.AssetsFolder
     if "" == folder {
         return nil
     }
@@ -104,7 +95,7 @@ func assetsDelivery(r *mux.Router) {
 // the assets embedded, a "/static/..." path only resolves if the file is either
 // in the binary or in OPEN_GO_PASTE_ASSETS_FOLDER.
 func checkCustomCss() {
-    customCss := os.Getenv("OPEN_GO_PASTE_CUSTOM_CSS")
+    customCss := config.Paste.CustomCss
     if "" == customCss || !strings.HasPrefix(customCss, "/static/") {
         return
     }
@@ -117,9 +108,9 @@ func checkCustomCss() {
     }.Open("/" + name)
 
     if nil != err {
-        log.Printf(
-            "Custom CSS %s is served by no asset: put the file in OPEN_GO_PASTE_ASSETS_FOLDER, or use an absolute url",
-            customCss,
+        slog.Warn(
+            "custom CSS is served by no asset: put the file in OPEN_GO_PASTE_ASSETS_FOLDER, or use an absolute url",
+            "css", customCss,
         )
         return
     }
@@ -143,7 +134,7 @@ func limitBodySize(next http.Handler) http.Handler {
 func styleSources() string {
     sources := "'self'"
 
-    customCss := os.Getenv("OPEN_GO_PASTE_CUSTOM_CSS")
+    customCss := config.Paste.CustomCss
     if "" == customCss {
         return sources
     }
@@ -197,12 +188,12 @@ func securityHeaders(next http.Handler) http.Handler {
 }
 
 func RunServer(r *mux.Router) error {
-    address := getServerParameters()
+    address := getServerParameters(config.Web)
     assetsDelivery(r)
     checkCustomCss()
 
-    if folder := os.Getenv("OPEN_GO_PASTE_ASSETS_FOLDER"); "" != folder {
-        log.Printf("Assets in %s take precedence over the embedded ones", folder)
+    if folder := config.Paste.AssetsFolder; "" != folder {
+        slog.Info("assets folder takes precedence over the embedded ones", "folder", folder)
     }
 
     // Explicit timeouts: the zero values of ListenAndServe let a client hold a
@@ -216,7 +207,7 @@ func RunServer(r *mux.Router) error {
         IdleTimeout:       120 * time.Second,
     }
 
-    log.Printf("Running server %s", address)
+    slog.Info("running server", "address", address)
 
     // ListenAndServe never returns a nil error. Ignoring it made the process
     // exit with a 0 status when the port was already taken.

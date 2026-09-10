@@ -18,7 +18,7 @@ func useTempPasteFolder(t *testing.T) string {
     t.Helper()
 
     folder := t.TempDir()
-    t.Setenv("OPEN_GO_PASTE_DATAS_FOLDER", folder)
+    usePasteConfig(t, PasteConfig{DatasFolder: folder})
 
     previousFolder := pasteFolder
     pasteFolder = ""
