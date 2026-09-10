@@ -9,13 +9,15 @@ import (
     "time"
 
     "github.com/gorilla/mux"
+    "leblanc.io/open-go-base/i18n"
 )
 
 func init() {
+    InitLocales()
     InitTemplateViews()
 }
 
-func newLocaleForTest(t *testing.T, acceptLanguage string) *Locale {
+func newLocaleForTest(t *testing.T, acceptLanguage string) *i18n.Localizer {
     t.Helper()
 
     request := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -25,20 +27,26 @@ func newLocaleForTest(t *testing.T, acceptLanguage string) *Locale {
 }
 
 func TestLocaleLangMatchesAcceptLanguage(t *testing.T) {
-    // The generated catalog only exposes "en" and "fr", so every request is
-    // narrowed down to one of those two tags.
+    // The catalogues only cover "en" and "fr", but the lang attribute carries
+    // the complete BCP 47 tag actually negotiated, region extension included: a
+    // fr-CA reader is served the French catalogue and formats its dates the
+    // Canadian way, and "fr-u-rg-cazzzz" is what says so. A language matching
+    // nothing falls back to the plain default tag.
     cases := map[string]string{
         "fr":             "fr",
-        "fr-FR,fr;q=0.9": "fr",
-        "en-US,en;q=0.9": "en",
+        "fr-FR,fr;q=0.9": "fr-u-rg-frzzzz",
+        "fr-CA":          "fr-u-rg-cazzzz",
+        "en":             "en",
+        "en-US,en;q=0.9": "en-u-rg-uszzzz",
         "":               "en",
         "zz":             "en",
+        "de-DE":          "en",
     }
 
     for acceptLanguage, expected := range cases {
         locale := newLocaleForTest(t, acceptLanguage)
-        if locale.Lang() != expected {
-            t.Errorf("Accept-Language %q: got lang %q, want %q", acceptLanguage, locale.Lang(), expected)
+        if locale.Lang().String() != expected {
+            t.Errorf("Accept-Language %q: got lang %q, want %q", acceptLanguage, locale.Lang().String(), expected)
         }
     }
 }
@@ -53,7 +61,7 @@ func TestIndexControllerIsLanguageIsolated(t *testing.T) {
         expectedLabel  string
     }{
         {"fr", "fr", "Expire dans"},
-        {"en-US", "en", "Expire in"},
+        {"en-US", "en-u-rg-uszzzz", "Expire in"},
     }
 
     var waitGroup sync.WaitGroup
@@ -95,7 +103,7 @@ func TestIndexControllerIsLanguageIsolated(t *testing.T) {
 func TestErrorHandlerAlwaysHasATitle(t *testing.T) {
     locale := newLocaleForTest(t, "en")
 
-    for _, code := range []int{http.StatusBadRequest, http.StatusNotFound, http.StatusMethodNotAllowed, http.StatusInternalServerError} {
+    for _, code := range []int{http.StatusBadRequest, http.StatusNotFound, http.StatusMethodNotAllowed, http.StatusTooManyRequests, http.StatusInternalServerError} {
         if title := errorTitle(locale, code); title == "" {
             t.Errorf("status %d: empty error title", code)
         }

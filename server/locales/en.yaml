@@ -1,0 +1,94 @@
+# Source language. The keys are structured screen.element; the cross cutting
+# vocabulary (errors, validation, durations, paste types) lives under roots of
+# its own rather than being duplicated screen by screen.
+#
+# Beware of the identifiers go-i18n reserves inside a message map: description,
+# id, hash, leftdelim, rightdelim, translation and the plural forms zero, one,
+# two, few, many, other. Using one as a nesting level fails the load with
+# "reserved keys mixed with unreserved keys".
+
+layout:
+  new_paste: Create a new paste
+  tagline: "As for GoFast, it is better to be hidden!"
+  # Carries its own markup: splitting the link out of the sentence would pin the
+  # word order to English.
+  footer: >-
+    <a href="/about">OpenGoPaste</a> is a text and source code management
+    service. The data sent by this service are known only by you and the
+    recipient (s) of the link because they are encrypted and decrypted by the
+    browser. At no time does the service know the data that is sent.
+
+error:
+  bad_request: 400 Bad Request
+  not_found: 404 Not Found
+  method_not_allowed: 405 Method Not Allowed
+  too_many_requests: 429 Too Many Requests
+  paste_not_found: this paste is not found
+  rate_limited: Too many requests from your address. Please try again in a minute.
+
+validation:
+  paste_content: Invalid paste content
+  max_read: max_read value must be a positive int
+  max_time: this max_time value is not allowed
+  paste_type: this type value is not allowed
+
+# Keyed by the duration strings of allowedDurations, so the Go side derives the
+# key instead of repeating the list.
+duration:
+  5m: 5 minutes
+  10m: 10 minutes
+  1h: 1 hour
+  1D: 1 day
+  1W: 1 week
+  1M: 1 month
+  1Y: 1 year
+
+# Keyed by the values of allowedPasteTypes, same reason.
+paste_type:
+  text: text
+  code: code
+  markdown: markdown
+
+index:
+  copy_link: Copy link and send it.
+  link_copied: "Link has been copied !"
+  save_error: This paste could not be saved. Please try again.
+  expire_in: Expire in
+  format: Format
+  max_read: Maximum read allowed
+  content: Content
+  save: Save
+
+# The §...§ markers are substituted by app.js once the paste is decrypted: the
+# values are only known in the browser. They have to be spelled exactly as in
+# assets/js/app.js.
+paste:
+  reads_and_expiry: This message can be viewed again §nbAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.
+  expiry_only: This message can be viewed up to §dateAvailable§ at §hourAvailable§.
+  last_read: This message is available for the last time. You will not be able to consult it later.
+
+about:
+  intro: OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.
+  encryption: >-
+    All texts added via OpenGoPaste are encrypted in AES 256 by the browser
+    before being sent to the server so that only the author of these lines and
+    the recipient(s) can access the content.
+  built_by: "OpenGoPaste build by:"
+  role_development: Development and design
+  role_design: Icon and logo
+  free_software: OpenGoPaste is free software.
+  code_license: 'Code is under license <a href="http://www.wtfpl.net/">WTFPL</a>.'
+  logos_license: 'Logos are under license <a href="http://artlibre.org/">Art Libre</a>.'
+  show_source: Show source code
+  source_software: Software source code
+  source_logo_official: Official logo source code
+  source_logo_alternative: Alternative official logo source code
+  source_logo_unofficial: Unofficial logo source code
+  # One sentence, links included. It used to be five fragments concatenated
+  # around two anchors and two names, which locked the word order.
+  logo_unofficial_credit: >-
+    work derived from an <a
+    href="http://hpfteam.free.fr/ressources/framartlibre/framashirt-logo_mouton.tar.gz"
+    title="Download original work">original creation</a> of <a
+    href="http://hpfteam.free.fr/graphisme-libre/">harrypopof</a>, modified by
+    Simon Leblanc and finally continued by Lucie Lenfant

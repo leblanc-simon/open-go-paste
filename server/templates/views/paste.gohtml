@@ -6,9 +6,9 @@
 
 {{- define "content" -}}
     <div class="paste-information show"
-        data-information="{{ trans "This message can be viewed again §nBAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§." }}"
-        data-information-no-nb-read="{{ trans "This message can be viewed up to §dateAvailable§ at §hourAvailable§." }}"
-        data-last-read="{{ trans "This message is available for the last time. You will not be able to consult it later." }}"
+        data-information="{{ T "paste.reads_and_expiry" }}"
+        data-information-no-nb-read="{{ T "paste.expiry_only" }}"
+        data-last-read="{{ T "paste.last_read" }}"
     ></div>
     {{/* The paste is handed over through data-* attributes rather than an inline
     script, which is what allows a Content-Security-Policy without

@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
+	"leblanc.io/open-go-base/i18n"
 )
 
 var errorView *View
@@ -30,7 +31,7 @@ func InitTemplateViews() {
 
 // render sends the view to the client, falling back to a plain 500 when the
 // template itself fails. Render leaves the response untouched in that case.
-func render(w http.ResponseWriter, view *View, locale *Locale, data interface{}, code int) {
+func render(w http.ResponseWriter, view *View, locale *i18n.Localizer, data interface{}, code int) {
 	if err := view.Render(w, locale, data, code); nil != err {
 		slog.Error("fail to render view", "err", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -42,20 +43,22 @@ type ErrorData struct {
 	Message string
 }
 
-func errorTitle(locale *Locale, code int) string {
+func errorTitle(locale *i18n.Localizer, code int) string {
 	switch code {
 	case http.StatusBadRequest:
-		return locale.t("400 Bad Request")
+		return locale.T("error.bad_request")
 	case http.StatusNotFound:
-		return locale.t("404 Not Found")
+		return locale.T("error.not_found")
 	case http.StatusMethodNotAllowed:
-		return locale.t("405 Method Not Allowed")
+		return locale.T("error.method_not_allowed")
+	case http.StatusTooManyRequests:
+		return locale.T("error.too_many_requests")
 	}
 
 	return http.StatusText(code)
 }
 
-func ErrorHandler(w http.ResponseWriter, locale *Locale, message string, code int) {
+func ErrorHandler(w http.ResponseWriter, locale *i18n.Localizer, message string, code int) {
 	errorData := ErrorData{
 		Title:   errorTitle(locale, code),
 		Message: message,
@@ -66,7 +69,15 @@ func ErrorHandler(w http.ResponseWriter, locale *Locale, message string, code in
 
 func NotFoundController(w http.ResponseWriter, r *http.Request) {
 	locale := NewLocale(r)
-	ErrorHandler(w, locale, locale.t("404 Not Found"), http.StatusNotFound)
+	ErrorHandler(w, locale, locale.T("error.not_found"), http.StatusNotFound)
+}
+
+// RateLimitController answers the requests the limiter turned away. The quota is
+// spent before the body is read, so it renders the same error view as the rest
+// rather than the plain text default of the limiter.
+func RateLimitController(w http.ResponseWriter, r *http.Request) {
+	locale := NewLocale(r)
+	ErrorHandler(w, locale, locale.T("error.rate_limited"), http.StatusTooManyRequests)
 }
 
 func AboutController(w http.ResponseWriter, r *http.Request) {
@@ -116,7 +127,7 @@ func GetPasteController(w http.ResponseWriter, r *http.Request) {
 			slog.Error("fail to read paste", "err", err)
 		}
 
-		ErrorHandler(w, locale, locale.t("this paste is not found"), http.StatusNotFound)
+		ErrorHandler(w, locale, locale.T("error.paste_not_found"), http.StatusNotFound)
 		return
 	}
 
@@ -131,24 +142,24 @@ func PostPasteController(w http.ResponseWriter, r *http.Request) {
 	pasteMaxRead, err := strconv.Atoi(r.FormValue("max_read"))
 
 	if !pasteContentPattern.MatchString(pasteContent) {
-		ErrorHandler(w, locale, locale.t("Invalid paste content"), http.StatusBadRequest)
+		ErrorHandler(w, locale, locale.T("validation.paste_content"), http.StatusBadRequest)
 		return
 	}
 
 	if nil != err || pasteMaxRead < 0 || pasteMaxRead > 500 {
-		ErrorHandler(w, locale, locale.t("max_read value must be a positive int"), http.StatusBadRequest)
+		ErrorHandler(w, locale, locale.T("validation.max_read"), http.StatusBadRequest)
 		return
 	}
 
 	var structMaxTime MaxTime
 	if !structMaxTime.HasAllowed(pasteMaxTime) {
-		ErrorHandler(w, locale, locale.t("this max_time value is not allowed"), http.StatusBadRequest)
+		ErrorHandler(w, locale, locale.T("validation.max_time"), http.StatusBadRequest)
 		return
 	}
 
 	var structPasteType PasteType
 	if !structPasteType.HasAllowed(pasteType) {
-		ErrorHandler(w, locale, locale.t("this type value is not allowed"), http.StatusBadRequest)
+		ErrorHandler(w, locale, locale.T("validation.paste_type"), http.StatusBadRequest)
 		return
 	}
 

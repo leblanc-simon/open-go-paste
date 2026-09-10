@@ -26,20 +26,20 @@
     <body>
         <header>
             <div class="logo">
-                <a href="/" title="{{ trans "Create a new paste" }}">
+                <a href="/" title="{{ T "layout.new_paste" }}">
                     <img width="88" height="88" src="/static/img/logo3.svg" />
                 </a>
             </div>
             <div class="title">
                 <h1>OpenGo<span class="title">Paste</span></h1>
-                <summary>{{ trans "As for GoFast, it is better to be hidden!" }}</summary>
+                <summary>{{ T "layout.tagline" }}</summary>
             </div>
         </header>
         <main>
             {{- template "content" .Data -}}
         </main>
         <footer>
-            <a href="/about">OpenGoPaste</a> {{ trans "is a text and source code management service. The data sent by this service are known only by you and the recipient (s) of the link because they are encrypted and decrypted by the browser. At no time does the service know the data that is sent." }}
+            {{ TH "layout.footer" }}
         </footer>
         {{- template "javascripts" .Data -}}
     </body>

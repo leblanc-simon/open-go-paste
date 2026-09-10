@@ -23,6 +23,9 @@ type PasteConfig struct {
 	AssetsFolder string `yaml:"assets_folder" env:"ASSETS_FOLDER" env-description:"Folder overriding the embedded assets"`
 	CustomCss    string `yaml:"custom_css"    env:"CUSTOM_CSS"    env-description:"Extra stylesheet, absolute url or /static/... path"`
 	Cron         string `yaml:"cron"          env:"CRON"          env-default:"0 0 0 * * *" env-description:"Expired paste cleanup schedule (CRON with seconds)"`
+	// The available languages are deduced from the catalogues embedded in the
+	// binary; this is only the fallback when the request matches none of them.
+	DefaultLanguage string `yaml:"default_language" env:"DEFAULT_LANGUAGE" env-default:"en" env-description:"Fallback language (BCP 47 tag, e.g. en, fr)"`
 }
 
 // Config is the whole configuration of the service, read once at startup.

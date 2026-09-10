@@ -12,6 +12,7 @@ import (
     "time"
 
     "github.com/google/uuid"
+    "leblanc.io/open-go-base/i18n"
 )
 
 // pasteFolder is resolved once by InitPasteFolder: neither the environment nor
@@ -59,19 +60,25 @@ type DurationTime struct {
 type MaxTime struct {
 }
 
-// allowedDurations is the source of truth for validation. GetAllowed keeps the
-// literal strings inline so gotext can still extract them.
+// allowedDurations is the source of truth for validation and for the form. The
+// list used to be repeated inside GetAllowed so that gotext could extract the
+// English labels; the labels now live in the catalogues under the
+// "duration.<value>" keys, so one list is enough.
 var allowedDurations = []string{"5m", "10m", "1h", "1D", "1W", "1M", "1Y"}
 
-func (mt MaxTime) GetAllowed(locale *Locale) []DurationTime {
-    maxTimes := []DurationTime{}
-    maxTimes = append(maxTimes, DurationTime{DurationString: "5m", Label: locale.t("5 minutes"), Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "10m", Label: locale.t("10 minutes"), Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1h", Label: locale.t("1 hour"), Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1D", Label: locale.t("1 day"), Default: true})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1W", Label: locale.t("1 week"), Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1M", Label: locale.t("1 month"), Default: false})
-    maxTimes = append(maxTimes, DurationTime{DurationString: "1Y", Label: locale.t("1 year"), Default: false})
+// defaultDuration is the entry preselected in the form.
+const defaultDuration = "1D"
+
+func (mt MaxTime) GetAllowed(locale *i18n.Localizer) []DurationTime {
+    maxTimes := make([]DurationTime, 0, len(allowedDurations))
+
+    for _, duration := range allowedDurations {
+        maxTimes = append(maxTimes, DurationTime{
+            DurationString: duration,
+            Label:          locale.T("duration." + duration),
+            Default:        defaultDuration == duration,
+        })
+    }
 
     return maxTimes
 }
@@ -124,15 +131,24 @@ type PasteTypeStruct struct {
 type PasteType struct {
 }
 
-// allowedPasteTypes is the source of truth for validation. GetAllowed keeps the
-// literal strings inline so gotext can still extract them.
+// allowedPasteTypes is the source of truth for validation and for the form, its
+// labels being the "paste_type.<value>" keys of the catalogues.
 var allowedPasteTypes = []string{"text", "code", "markdown"}
 
-func (pt PasteType) GetAllowed(locale *Locale) []PasteTypeStruct {
-    types := []PasteTypeStruct{}
-    types = append(types, PasteTypeStruct{Value: "text", Label: locale.t("text"), Default: true})
-    types = append(types, PasteTypeStruct{Value: "code", Label: locale.t("code"), Default: false})
-    types = append(types, PasteTypeStruct{Value: "markdown", Label: locale.t("markdown"), Default: false})
+// defaultPasteType is the entry preselected in the form.
+const defaultPasteType = "text"
+
+func (pt PasteType) GetAllowed(locale *i18n.Localizer) []PasteTypeStruct {
+    types := make([]PasteTypeStruct, 0, len(allowedPasteTypes))
+
+    for _, pasteType := range allowedPasteTypes {
+        types = append(types, PasteTypeStruct{
+            Value:   pasteType,
+            Label:   locale.T("paste_type." + pasteType),
+            Default: defaultPasteType == pasteType,
+        })
+    }
+
     return types
 }
 

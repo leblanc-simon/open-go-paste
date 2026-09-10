@@ -51,6 +51,7 @@ environment otherwise. `-c <path>` points at another file, and `./open-go-paste
 * Customize clean datas CRON : `OPEN_GO_PASTE_CRON="0 0 0 * * *"` (CRON syntax with seconds)
 * Requests per minute per client : `OPEN_GO_PASTE_RATE_LIMIT=100` (`0` disables the quota)
 * Reverse proxy CIDRs : `OPEN_GO_PASTE_TRUSTED_PROXIES=10.0.0.0/8,192.168.0.0/16`
+* Fallback language : `OPEN_GO_PASTE_DEFAULT_LANGUAGE=fr` (BCP 47 tag, defaults to `en`)
 * Log level : `OPEN_GO_PASTE_LOG_LEVEL=info` (`debug|info|warn|error`, defaults to `error`)
 * Log format : `OPEN_GO_PASTE_LOG_FORMAT=json` (`text|json`)
 * Include the source position in the logs : `OPEN_GO_PASTE_LOG_SOURCE=true`
@@ -79,6 +80,7 @@ paste:
   datas_folder: /var/open-go-paste/datas
   custom_css: /static/css/custom.css
   cron: "0 0 0 * * *"
+  default_language: en
 ```
 
 ### Rate limiting
@@ -107,8 +109,45 @@ startup, rather than letting the page 404 on it.
 
 ### Internationalisation
 
-In template, we use the function `trans`. To extract string, use `release/extract-message-from-template.sh`
-(it needs `gotext` : `go install golang.org/x/text/cmd/gotext@latest`).
+Translations live in `server/locales/<tag>.yaml`, one file per language, named
+after its BCP 47 tag. They are embedded in the binary, so adding a language is a
+matter of dropping a file next to the others and rebuilding — the available
+languages are deduced from what is there, nothing else to declare.
+
+Keys are in English and structured `screen.element`; the vocabulary shared by
+several screens (`error.`, `validation.`, `duration.`, `paste_type.`) lives under
+roots of its own. In the templates:
+
+```gohtml
+{{ T "index.save" }}                     {{/* escaped, the usual case */}}
+{{ Tn "some.count" 3 }}                  {{/* plural form */}}
+{{ TH "about.code_license" }}            {{/* message carrying its own markup */}}
+```
+
+`TH` is reserved for the handful of sentences whose links sit inside the text
+(the footer, the licence lines of the about page): splitting the anchor out of
+the sentence would pin the word order to English. Its result is not escaped, so
+it must only ever be given a message from the catalogues.
+
+Go code asks for a key through the request locale: `locale.T("error.not_found")`.
+The labels of the durations and of the paste types are derived from their allowed
+values, `duration.1D` and `paste_type.markdown` for instance, so the lists in
+`paste.go` are the only place they are enumerated.
+
+`?lang=fr` forces a language for one request, otherwise `Accept-Language`
+decides, with `OPEN_GO_PASTE_DEFAULT_LANGUAGE` as the last resort. The `lang`
+attribute of the document carries the complete negotiated tag, region extension
+included: a `fr-CA` reader gets the French catalogue and `lang="fr-u-rg-cazzzz"`,
+which is what tells the browser to format dates the Canadian way.
+
+Beware of the identifiers `go-i18n` reserves inside a message (`description`,
+`id`, `hash`, `translation`, `leftdelim`, `rightdelim` and the plural forms
+`zero`, `one`, `two`, `few`, `many`, `other`): using one as a nesting level fails
+the load at startup.
+
+`TestEveryTranslationKeyResolvesInEveryLanguage` asks every language for every
+key the templates and the controllers use, since a missing translation otherwise
+renders as the key itself.
 
 ### Front end dependencies
 

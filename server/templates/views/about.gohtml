@@ -9,41 +9,37 @@
             <div class="logo"><img src="/static/img/logo2.svg" width="350" /></div>
         </div>
         <p class="description">
-            {{ trans "OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing." }}
+            {{ T "about.intro" }}
         </p>
         <p class="description">
-            {{ trans "All texts added via OpenGoPaste are encrypted in AES 256 by the browser before being sent to the server so that only the author of these lines and the recipient(s) can access the content."}}
+            {{ T "about.encryption" }}
         </p>
         <div class="authors">
-            {{ trans "OpenGoPaste build by:" }}
-            <div class="author dev" data-content="{{ trans "Development and design" }}">Simon Leblanc</div>
-            <div class="author design" data-content="{{ trans "Icon and logo" }}">Lucie Lenfant</div>
+            {{ T "about.built_by" }}
+            <div class="author dev" data-content="{{ T "about.role_development" }}">Simon Leblanc</div>
+            <div class="author design" data-content="{{ T "about.role_design" }}">Lucie Lenfant</div>
         </div>
         <div class="open-source">
             <p>
-                {{ trans "OpenGoPaste is free software." }}
+                {{ T "about.free_software" }}
                 <ul>
-                    <li>{{ trans "Code is under license" }} <a href="http://www.wtfpl.net/">WTFPL</a>.</li>
-                    <li>{{ trans "Logos are under license"}} <a href="http://artlibre.org/">Art Libre</a>.</li>
+                    <li>{{ TH "about.code_license" }}</li>
+                    <li>{{ TH "about.logos_license" }}</li>
                 </ul>
             </p>
             <ul>
                 <li><a class="link" href="https://github.com/leblanc-simon/open-go-paste"
-                        title="{{ trans "Show source code" }}">{{ trans "Software source code" }}</a>
+                        title="{{ T "about.show_source" }}">{{ T "about.source_software" }}</a>
                 </li>
                 <li><a class="link" href="/static/img/logo.svg"
-                        title="{{ trans "Show source code" }}">{{ trans "Official logo source code" }}</a>
+                        title="{{ T "about.show_source" }}">{{ T "about.source_logo_official" }}</a>
                 </li>
                 <li><a class="link" href="/static/img/logo3.svg"
-                        title="{{ trans "Show source code" }}">{{ trans "Alternative official logo source code" }}</a>
+                        title="{{ T "about.show_source" }}">{{ T "about.source_logo_alternative" }}</a>
                 </li>
                 <li><a class="link" href="/static/img/logo2.svg"
-                        title="{{ trans "Show source code" }}">{{ trans "Unofficial logo source code" }}</a>
-                        ({{ trans "work derived from an" }} <a
-                        href="http://hpfteam.free.fr/ressources/framartlibre/framashirt-logo_mouton.tar.gz"
-                        title="{{ trans "Download original work" }}"
-                        >{{ trans "original creation" }}</a> {{ trans "of" }} <a href="http://hpfteam.free.fr/graphisme-libre/">harrypopof</a>,
-                         {{ trans "modified by" }} Simon Leblanc {{ trans "and finally continue by" }} Lucie Lenfant)
+                        title="{{ T "about.show_source" }}">{{ T "about.source_logo_unofficial" }}</a>
+                        ({{ TH "about.logo_unofficial_credit" }})
                 </li>
         </div>
     </div>

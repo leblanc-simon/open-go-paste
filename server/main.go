@@ -10,6 +10,7 @@ import (
 
 func main() {
     LoadConfig()
+    InitLocales()
     InitTemplateViews()
     InitPasteFolder()
 

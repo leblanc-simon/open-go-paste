@@ -7,6 +7,8 @@ import (
   "io/fs"
   "log/slog"
   "net/http"
+
+  "leblanc.io/open-go-base/i18n"
 )
 
 var LayoutDir string = "templates"
@@ -30,11 +32,19 @@ func NewView(layout string, files ...string) *View {
     files = append(files, layoutFiles()...)
     t := template.New(files[0])
 
-    // "trans" has to exist at parse time, but its real implementation depends
-    // on the language negotiated for the request: Render rebinds it on a clone.
+    // The translation functions have to exist at parse time, but their real
+    // implementation depends on the language negotiated for the request: Render
+    // rebinds them on a clone. The stubs echo the message id, which is also what
+    // the bundle does for a missing translation.
     t = t.Funcs(template.FuncMap{
-        "trans": func(text string) string {
-            return text
+        "T": func(messageID string, data ...any) string {
+            return messageID
+        },
+        "Tn": func(messageID string, count int, data ...any) string {
+            return messageID
+        },
+        "TH": func(messageID string, data ...any) template.HTML {
+            return template.HTML(messageID)
         },
     })
 
@@ -57,21 +67,19 @@ type View struct {
 type RenderData struct {
     Data interface{}
     CustomCss string
-    Locale *Locale
+    Locale *i18n.Localizer
 }
 
 // Render writes the view for a single request. The parsed template is never
-// executed as is: every request renders a clone carrying its own "trans"
-// function, so no request state is shared between goroutines.
-func (v *View) Render(w http.ResponseWriter, locale *Locale, data interface{}, code int) error {
+// executed as is: every request renders a clone carrying its own translation
+// functions, so no request state is shared between goroutines.
+func (v *View) Render(w http.ResponseWriter, locale *i18n.Localizer, data interface{}, code int) error {
     tmpl, err := v.Template.Clone()
     if err != nil {
         return err
     }
 
-    tmpl = tmpl.Funcs(template.FuncMap{
-        "trans": locale.t,
-    })
+    tmpl = tmpl.Funcs(translationFuncs(locale))
 
     renderData := RenderData{
         Data: data,

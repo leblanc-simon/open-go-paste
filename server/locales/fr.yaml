@@ -1,0 +1,78 @@
+layout:
+  new_paste: Créer un nouveau paste
+  tagline: "Comme pour le GoFast, il est préférable d'être caché !"
+  footer: >-
+    <a href="/about">OpenGoPaste</a> est un service de gestion d'extraits de
+    texte et de code source. Les données envoyées par ce service ne sont connues
+    que par vous seul et le(s) destinataire(s) du lien car elles sont chiffrées
+    et déchiffrées par le navigateur. À aucun moment le service ne connait les
+    données qui sont envoyées.
+
+error:
+  bad_request: 400 Mauvaise requête
+  not_found: 404 Page non trouvée
+  method_not_allowed: 405 Méthode non autorisée
+  too_many_requests: 429 Trop de requêtes
+  paste_not_found: Ce contenu n'a pas été trouvé
+  rate_limited: Trop de requêtes depuis votre adresse. Veuillez réessayer dans une minute.
+
+validation:
+  paste_content: Contenu invalide
+  max_read: La valeur de max_read doit être un entier positif
+  max_time: La valeur de max_time n'est pas autorisée
+  paste_type: La valeur du type n'est pas autorisée
+
+duration:
+  5m: 5 minutes
+  10m: 10 minutes
+  1h: 1 heure
+  1D: 1 jour
+  1W: 1 semaine
+  1M: 1 mois
+  1Y: 1 an
+
+paste_type:
+  text: Texte
+  code: Code
+  markdown: Markdown
+
+index:
+  copy_link: Copier le lien et envoyer le.
+  link_copied: "Le lien a été copié !"
+  save_error: Ce contenu n'a pas pu être enregistré. Veuillez réessayer.
+  expire_in: Expire dans
+  format: Format
+  max_read: Nombre de lecture maximum
+  content: Contenu
+  save: Enregistrer
+
+paste:
+  reads_and_expiry: Ce message pourra être consulté encore §nbAvailableRead§ fois ou jusqu'au §dateAvailable§ à §hourAvailable§.
+  expiry_only: Ce message pourra être consulté jusqu'au §dateAvailable§ à §hourAvailable§.
+  last_read: Ce message est disponible pour la dernière fois. Vous ne pourrez plus le consulter par la suite.
+
+about:
+  intro: >-
+    OpenGoPaste est un logiciel libre permettant mettre en ligne de manière
+    sécurisée des notes, du code ou des textes afin de les partager.
+  encryption: >-
+    L'ensemble des textes ajoutés via OpenGoPaste sont chiffrés en AES 256 par
+    le navigateur avant d'être envoyés au serveur afin que seul l'auteur de ces
+    lignes et le ou les destinataires ne puissent accéder au contenu.
+  built_by: "OpenGoPaste a été réalisé par :"
+  role_development: Développement et design
+  role_design: Icône et logo
+  free_software: OpenGoPaste est un logiciel libre.
+  code_license: 'Le code est sous licence <a href="http://www.wtfpl.net/">WTFPL</a>.'
+  logos_license: 'Les logos sont sous licence <a href="http://artlibre.org/">Art Libre</a>.'
+  show_source: Voir le code source
+  source_software: Code source du logiciel
+  source_logo_official: Source du logo officiel
+  source_logo_alternative: Source du second logo officiel
+  source_logo_unofficial: Source du logo officieux
+  logo_unofficial_credit: >-
+    œuvre dérivée d'une <a
+    href="http://hpfteam.free.fr/ressources/framartlibre/framashirt-logo_mouton.tar.gz"
+    title="Télécharger la création originale">création originale</a> de <a
+    href="http://hpfteam.free.fr/graphisme-libre/">harrypopof</a>, modifiée par
+    Simon Leblanc et enfin reprise par Lucie Lenfant

@@ -215,7 +215,11 @@ func RunServer(r *mux.Router) error {
         slog.Info("assets folder takes precedence over the embedded ones", "folder", folder)
     }
 
-    limiter, err := ratelimit.New(config.Web.RateLimit, config.Web.TrustedProxies)
+    limiter, err := ratelimit.New(
+        config.Web.RateLimit,
+        config.Web.TrustedProxies,
+        ratelimit.WithLimitHandler(http.HandlerFunc(RateLimitController)),
+    )
     if nil != err {
         // Only a malformed trusted proxy CIDR gets here, which is a
         // configuration error: starting anyway would silently trust no proxy

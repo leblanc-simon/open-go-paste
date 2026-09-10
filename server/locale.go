@@ -1,49 +1,69 @@
 package main
 
-//go:generate gotext -srclang=en update -out=catalog/catalog.go -lang=en,fr
-
 import (
-    "net/http"
+	"embed"
+	"html/template"
+	"log/slog"
+	"net/http"
+	"os"
 
-    _ "leblanc.io/open-go-paste/catalog"
-
-    "golang.org/x/text/language"
-    "golang.org/x/text/message"
+	"leblanc.io/open-go-base/i18n"
 )
 
-var supportedLanguages = message.DefaultCatalog.Languages()
+// localesFS carries the translation catalogues inside the binary, next to the
+// templates and the assets: the service ships as a single file.
+//
+//go:embed locales/*.yaml
+var localesFS embed.FS
 
-var matcher = language.NewMatcher(supportedLanguages)
+// bundle holds every catalogue, read once at startup. It is safe for concurrent
+// reads; a Localizer is negotiated per request and must not be shared between
+// goroutines.
+var bundle *i18n.Bundle
 
-// Locale holds the language negotiated for a single request. An instance is
-// built per request and must never be shared between goroutines.
-type Locale struct {
-    Printer *message.Printer
-    tag     language.Tag
+func InitLocales() {
+	defaultLanguage := config.Paste.DefaultLanguage
+	if "" == defaultLanguage {
+		// Reached by the tests, which do not go through LoadConfig and the
+		// env-default it applies.
+		defaultLanguage = "en"
+	}
+
+	loaded, err := i18n.NewFS(localesFS, "locales", defaultLanguage)
+	if nil != err {
+		// A malformed catalogue, a reserved key used as a nesting level, or an
+		// unknown default language. Every page of the service renders text:
+		// none of them can be served without this.
+		slog.Error("fail to load the translations", "err", err)
+		os.Exit(1)
+	}
+
+	bundle = loaded
+
+	slog.Info("translations loaded", "languages", bundle.Languages(), "default", defaultLanguage)
 }
 
-func NewLocale(r *http.Request) *Locale {
-    acceptLang := r.Header.Get("Accept-Language")
-    tag, index := language.MatchStrings(matcher, "", acceptLang)
-
-    // MatchStrings may return a tag carrying extensions (-u-rg-...) which have
-    // no place in the lang attribute: keep the plain catalog tag for the markup.
-    documentTag := tag
-    if index >= 0 && index < len(supportedLanguages) {
-        documentTag = supportedLanguages[index]
-    }
-
-    return &Locale{
-        Printer: message.NewPrinter(tag),
-        tag:     documentTag,
-    }
+// NewLocale negotiates the language of a single request: ?lang= forces it,
+// Accept-Language decides otherwise, the configured default language is the
+// last resort.
+func NewLocale(r *http.Request) *i18n.Localizer {
+	return bundle.FromRequest(r)
 }
 
-func (locale Locale) t(text string) string {
-    return locale.Printer.Sprintf(text)
-}
+// translationFuncs binds the catalogue of one request to the templates. T and Tn
+// come from the bundle and are escaped like any other value.
+//
+// TH is for the handful of messages that carry their own markup, the footer and
+// the licence lines of the about page: their links sit inside the sentence, and
+// splitting them out would pin the word order to English. Both the message and
+// the anchors are repo content, no paste data ever reaches them — which is what
+// makes marking the result as template.HTML acceptable here.
+func translationFuncs(locale *i18n.Localizer) template.FuncMap {
+	funcs := template.FuncMap(locale.FuncMap())
 
-// Lang returns the BCP 47 tag to use in the lang attribute of the document.
-func (locale Locale) Lang() string {
-    return locale.tag.String()
+	funcs["TH"] = func(messageID string, data ...any) template.HTML {
+		return template.HTML(locale.T(messageID, data...))
+	}
+
+	return funcs
 }
