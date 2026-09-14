@@ -7,8 +7,38 @@ import (
 	"net/http"
 	"os"
 
+	"golang.org/x/text/language"
 	"leblanc.io/open-go-base/i18n"
 )
+
+// rightToLeftScripts lists the scripts written from right to left. Only English
+// and French ship today, so this never fires — it is here so that adding a
+// catalogue is enough, without a layout that keeps claiming dir="ltr" and
+// mirrors nothing.
+var rightToLeftScripts = map[string]bool{
+	"Adlm": true,
+	"Arab": true,
+	"Hebr": true,
+	"Nkoo": true,
+	"Rohg": true,
+	"Samr": true,
+	"Syrc": true,
+	"Thaa": true,
+	"Yezi": true,
+}
+
+// TextDirection answers what the dir attribute of the page has to say for a
+// language. The script of a tag is often only inferred, which is fine here: a
+// wrong guess flips the layout, it never hides anything.
+func TextDirection(tag language.Tag) string {
+	script, _ := tag.Script()
+
+	if rightToLeftScripts[script.String()] {
+		return "rtl"
+	}
+
+	return "ltr"
+}
 
 // localesFS carries the translation catalogues inside the binary, next to the
 // templates and the assets: the service ships as a single file.

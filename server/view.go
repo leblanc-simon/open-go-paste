@@ -68,6 +68,9 @@ type RenderData struct {
     Data interface{}
     CustomCss string
     Locale *i18n.Localizer
+    // Dir feeds the dir attribute of the document, derived from the negotiated
+    // language rather than pinned to "ltr" in the layout.
+    Dir string
 }
 
 // Render writes the view for a single request. The parsed template is never
@@ -85,6 +88,7 @@ func (v *View) Render(w http.ResponseWriter, locale *i18n.Localizer, data interf
         Data: data,
         CustomCss: config.Paste.CustomCss,
         Locale: locale,
+        Dir: TextDirection(locale.Lang()),
     }
 
     // Render into a buffer first: a template failure must not leave a half
