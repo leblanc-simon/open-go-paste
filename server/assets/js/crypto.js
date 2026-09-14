@@ -24,6 +24,32 @@ const markersByAlgorithm = {
     'AES-CBC': 'c',
 };
 
+// The reasons a paste can stay unreadable. They exist so that app.js can tell
+// the reader which one happened: a link truncated on its way is not the same
+// accident as a key that does not match, and neither is a browser that cannot
+// decrypt at all. Without them every failure looked alike — an empty page.
+export const CryptoFailure = {
+    // No fragment at all: the link was cut after the "#", which is what mail
+    // clients and chat gateways do to long URLs.
+    MissingKey: 'missing-key',
+    // A fragment is there but does not parse: truncated mid-key, or mangled.
+    MalformedKey: 'malformed-key',
+    // The ciphertext did not authenticate against the key of the link.
+    WrongKey: 'wrong-key',
+    // No Web Crypto: the page is served over plain HTTP, or the browser is too
+    // old. Nothing can be encrypted nor decrypted here.
+    Unsupported: 'unsupported',
+};
+
+export class CryptoError extends Error {
+    constructor(failure, cause) {
+        super(`crypto failure: ${failure}`);
+        this.name = 'CryptoError';
+        this.failure = failure;
+        this.cause = cause;
+    }
+}
+
 export default class Crypto {
     constructor() {
         // The key belongs to the instance, never to the module: a key shared
@@ -33,16 +59,36 @@ export default class Crypto {
         this.jwk = null;
         this.iv = null;
         this.algorithm = defaultAlgorithm;
+        // A fragment that does not parse is kept aside rather than thrown from
+        // the constructor: the creation page builds an instance too, and a
+        // stray hash in its url must not stop it from encrypting. decrypt is
+        // where the failure matters, and where it is raised.
+        this.fragmentError = null;
 
-        if (window.location.hash) {
-            this.readFragment(window.location.hash.substring(1));
+        const fragment = window.location.hash.substring(1);
+        if ('' === fragment) {
+            return;
+        }
+
+        try {
+            this.readFragment(fragment);
+        } catch (error) {
+            this.reset();
+            this.fragmentError = error;
         }
     }
 
+    // readFragment throws rather than leaving a half built key behind: a paste
+    // that cannot be read has to say so, and every malformed fragment used to
+    // end up as the same silent rejection further down.
     readFragment(fragment) {
         // Some clients percent encode the fragment before handing it over.
         if (/%7C/i.test(fragment)) {
-            fragment = decodeURIComponent(fragment);
+            try {
+                fragment = decodeURIComponent(fragment);
+            } catch (error) {
+                throw new CryptoError(CryptoFailure.MalformedKey, error);
+            }
         }
 
         const parts = fragment.split('|');
@@ -53,13 +99,37 @@ export default class Crypto {
             this.algorithm = legacyAlgorithm;
         }
 
-        const ivBytes = parts.shift().split(',');
-        this.iv = new Uint8Array(ivBytes.length);
-        ivBytes.forEach((ivByte, index) => {
-            this.iv[index] = Number(ivByte);
-        });
+        // A marker on its own, or a fragment cut right after it.
+        if (parts.length < 2) {
+            throw new CryptoError(CryptoFailure.MalformedKey);
+        }
 
-        this.jwk = JSON.parse(atob(parts.join('|')));
+        const ivBytes = parts.shift().split(',');
+        if (ivBytes.length !== ivSizes[this.algorithm]) {
+            throw new CryptoError(CryptoFailure.MalformedKey);
+        }
+
+        this.iv = new Uint8Array(ivBytes.length);
+        for (let index = 0; index < ivBytes.length; index++) {
+            const value = Number(ivBytes[index]);
+            if (!Number.isInteger(value) || value < 0 || value > 255) {
+                throw new CryptoError(CryptoFailure.MalformedKey);
+            }
+
+            this.iv[index] = value;
+        }
+
+        try {
+            this.jwk = JSON.parse(atob(parts.join('|')));
+        } catch (error) {
+            // atob rejects anything that is not base64, JSON.parse anything
+            // that is not an object: both mean a fragment that lost characters.
+            throw new CryptoError(CryptoFailure.MalformedKey, error);
+        }
+
+        if (null === this.jwk || 'object' !== typeof this.jwk) {
+            throw new CryptoError(CryptoFailure.MalformedKey);
+        }
     }
 
     // getFragment returns what has to be appended to the link, and is the only
@@ -86,12 +156,29 @@ export default class Crypto {
     }
 
     async decrypt(data) {
+        if (null !== this.fragmentError) {
+            throw this.fragmentError;
+        }
+
+        if (null === this.jwk) {
+            throw new CryptoError(CryptoFailure.MissingKey);
+        }
+
         const key = await this.key();
-        const decrypted = await window.crypto.subtle.decrypt(
-            Crypto.getEncryptDecryptOptions(this.algorithm, this.iv),
-            key,
-            new Uint8Array(data.map(Number)).buffer
-        );
+
+        let decrypted;
+        try {
+            decrypted = await window.crypto.subtle.decrypt(
+                Crypto.getEncryptDecryptOptions(this.algorithm, this.iv),
+                key,
+                new Uint8Array(data.map(Number)).buffer
+            );
+        } catch (error) {
+            // AES-GCM authenticates: a rejection here means the key of the link
+            // does not open this ciphertext, or that the ciphertext was
+            // altered. Either way the reader cannot recover the content.
+            throw new CryptoError(CryptoFailure.WrongKey, error);
+        }
 
         return Crypto.decodeText(decrypted, this.algorithm);
     }
@@ -117,6 +204,7 @@ export default class Crypto {
         this.jwk = null;
         this.iv = null;
         this.algorithm = defaultAlgorithm;
+        this.fragmentError = null;
     }
 
     importKeyFromFragment() {
@@ -169,8 +257,11 @@ export default class Crypto {
         throw new Error(`Unsupported algorithm ${algorithm}`);
     }
 
+    // support answers whether this page can encrypt at all. window.crypto.subtle
+    // is undefined outside a secure context, so a service published over plain
+    // HTTP lands here — with nothing to warn the visitor until app.js asks.
     static support() {
-        return (window.crypto && window.crypto.subtle && window.crypto.subtle.encrypt);
+        return Boolean(window.crypto && window.crypto.subtle && window.crypto.subtle.encrypt);
     }
 
     static encodeText(text, algorithm) {
