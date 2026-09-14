@@ -37,6 +37,12 @@ const customCssName = "assets/css/custom.css"
 // spills to disk past 32 MB with no global ceiling at all.
 const maxRequestBytes = 4 << 20
 
+// maxPasteContentBytes is what is left for the paste field itself once the
+// other fields and the multipart envelope are accounted for. The creation page
+// hands it to the browser, which checks the encrypted payload against it before
+// uploading a body the server would only answer 413 to.
+const maxPasteContentBytes = maxRequestBytes - 8<<10
+
 func getServerParameters(web appconf.Web) string {
     return net.JoinHostPort(web.Host, strconv.Itoa(web.Port))
 }

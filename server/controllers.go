@@ -22,6 +22,11 @@ var pasteView *View
 // bytes.
 var pasteContentPattern = regexp.MustCompile(`^[0-9,]+$`)
 
+// defaultMultipartMemory caps what a multipart body may hold in memory before
+// spilling to disk. maxRequestBytes already keeps the whole body under four
+// megabytes, so nothing ever reaches the disk here.
+const defaultMultipartMemory = 4 << 20
+
 func InitTemplateViews() {
 	errorView = NewView("layout", "templates/views/error.gohtml")
 	aboutView = NewView("layout", "templates/views/about.gohtml")
@@ -87,6 +92,9 @@ func AboutController(w http.ResponseWriter, r *http.Request) {
 type IndexData struct {
 	AllowedTimes []DurationTime
 	AllowedTypes []PasteTypeStruct
+	// MaxContentBytes lets the browser refuse an oversized paste before
+	// uploading it, rather than after a rejected megabyte.
+	MaxContentBytes int
 }
 
 func IndexController(w http.ResponseWriter, r *http.Request) {
@@ -95,11 +103,25 @@ func IndexController(w http.ResponseWriter, r *http.Request) {
 	var pasteType PasteType
 
 	indexData := IndexData{
-		AllowedTimes: maxTime.GetAllowed(locale),
-		AllowedTypes: pasteType.GetAllowed(locale),
+		AllowedTimes:    maxTime.GetAllowed(locale),
+		AllowedTypes:    pasteType.GetAllowed(locale),
+		MaxContentBytes: maxPasteContentBytes,
 	}
 
 	render(w, indexView, locale, indexData, http.StatusOK)
+}
+
+// parseSubmission reads the body of a paste creation, whether it came as
+// multipart — which is what FormData produces — or urlencoded. ErrNotMultipart
+// is not a failure: ParseMultipartForm has already parsed the urlencoded body
+// by the time it reports it.
+func parseSubmission(r *http.Request) error {
+	err := r.ParseMultipartForm(defaultMultipartMemory)
+	if nil != err && !errors.Is(err, http.ErrNotMultipart) {
+		return err
+	}
+
+	return nil
 }
 
 // IsValidUserAgent tells real browsers apart from crawlers and link previewers,
@@ -136,6 +158,31 @@ func GetPasteController(w http.ResponseWriter, r *http.Request) {
 
 func PostPasteController(w http.ResponseWriter, r *http.Request) {
 	locale := NewLocale(r)
+
+	// FormValue swallows the parse error, and an oversized body used to surface
+	// as an empty paste field — answered with "invalid content", which sent the
+	// visitor looking for a problem in their text.
+	if err := parseSubmission(r); nil != err {
+		var maxBytesError *http.MaxBytesError
+		if errors.As(err, &maxBytesError) {
+			ErrorHandler(w, locale, locale.T("error.request_too_large"), http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		ErrorHandler(w, locale, locale.T("validation.paste_content"), http.StatusBadRequest)
+		return
+	}
+
+	// app.js marks every submission it encrypts. Its absence means the form was
+	// posted by something that did not encrypt — a browser with JavaScript off
+	// getting past the disabled fieldset, or a client posting by hand. Storing
+	// that would mean holding clear text, which is the one thing this service
+	// promises never to do.
+	if "1" != r.FormValue("encrypted") {
+		ErrorHandler(w, locale, locale.T("error.javascript_required"), http.StatusBadRequest)
+		return
+	}
+
 	pasteContent := r.FormValue("paste")
 	pasteType := r.FormValue("type")
 	pasteMaxTime := r.FormValue("max_time")
