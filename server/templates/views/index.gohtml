@@ -81,5 +81,10 @@
 {{- end -}}
 
 {{- define "javascripts" -}}
+    {{/* app.js imports these two, so without the hint the browser only finds
+    out they exist once it has parsed app.js: one round trip in series before
+    anything can be decrypted. */}}
+    <link rel="modulepreload" href="/static/js/crypto.js">
+    <link rel="modulepreload" href="/static/js/sanitize.js">
     <script src="/static/js/app.js" type="module"></script>
 {{- end -}}
