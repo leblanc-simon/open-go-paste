@@ -1,7 +1,9 @@
 package main
 
 import (
+    "crypto/sha256"
     "embed"
+    "encoding/base64"
     "io/fs"
     "log/slog"
     "net"
@@ -89,13 +91,106 @@ func embeddedAssets() http.FileSystem {
     return http.FS(assets)
 }
 
-func assetsDelivery(r *mux.Router) {
-    fileSystem := overlayFileSystem{
-        embedded: embeddedAssets(),
-        overlay:  assetsOverlay(),
+// assetETags maps each embedded asset to a validator derived from its bytes.
+// It is built once at startup: the embedded tree cannot change while the
+// process runs, and a hash keeps the same value across restarts and across
+// instances, where a modification time would differ on each of them.
+//
+// Without a validator of any kind, embed.FS reports a zero modification time,
+// http.ServeContent omits Last-Modified, and a browser has nothing to
+// revalidate against: every navigation pulled the fonts and the scripts again.
+var assetETags = map[string]string{}
+
+func computeAssetETags() {
+    assets, err := fs.Sub(assetsFS, "assets")
+    if nil != err {
+        panic(err)
     }
 
-    r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(fileSystem)))
+    walkErr := fs.WalkDir(assets, ".", func(path string, entry fs.DirEntry, err error) error {
+        if nil != err || entry.IsDir() {
+            return err
+        }
+
+        content, err := fs.ReadFile(assets, path)
+        if nil != err {
+            return err
+        }
+
+        // Half a SHA-256 is far more than what a cache validator needs, and it
+        // keeps the header short.
+        sum := sha256.Sum256(content)
+        assetETags["/"+path] = `"` + base64.RawURLEncoding.EncodeToString(sum[:16]) + `"`
+
+        return nil
+    })
+
+    if nil != walkErr {
+        // Serving without validators is slower, not broken: trace and carry on.
+        slog.Error("fail to fingerprint the embedded assets", "err", walkErr)
+    }
+}
+
+// cacheControlFor answers how long a browser may keep an asset without asking
+// again. The fonts carry their version in their file name and never change
+// under it, so they are immutable; the rest is revalidated often enough for a
+// deployment to show up quickly, which the ETag turns into a 304.
+func cacheControlFor(path string) string {
+    if strings.HasPrefix(path, "/fonts/") {
+        return "public, max-age=31536000, immutable"
+    }
+
+    return "public, max-age=300"
+}
+
+// assetCacheHeaders states how long the asset may be kept and what identifies
+// this version of it. http.ServeContent reads the ETag back out of the header
+// to answer If-None-Match, so the 304 costs nothing here.
+func assetCacheHeaders(overlay http.FileSystem, next http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        name := strings.TrimPrefix(r.URL.Path, "/static")
+
+        header := w.Header()
+        header.Set("Cache-Control", cacheControlFor(name))
+
+        // The operator folder takes precedence over the binary, so the
+        // fingerprint of an embedded file would be a lie for anything it
+        // overrides. Those keep the modification time read from the disk.
+        if etag, ok := assetETags[name]; ok && !overlayHas(overlay, name) {
+            header.Set("ETag", etag)
+        }
+
+        next.ServeHTTP(w, r)
+    })
+}
+
+func overlayHas(overlay http.FileSystem, name string) bool {
+    if nil == overlay {
+        return false
+    }
+
+    file, err := overlay.Open(name)
+    if nil != err {
+        return false
+    }
+
+    file.Close()
+
+    return true
+}
+
+func assetsDelivery(r *mux.Router) {
+    computeAssetETags()
+
+    overlay := assetsOverlay()
+    fileSystem := overlayFileSystem{
+        embedded: embeddedAssets(),
+        overlay:  overlay,
+    }
+
+    delivery := http.StripPrefix("/static/", http.FileServer(fileSystem))
+
+    r.PathPrefix("/static/").Handler(assetCacheHeaders(overlay, delivery))
 }
 
 // checkCustomCss traces a stylesheet that will 404 at the first page load: with
