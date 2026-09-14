@@ -8,30 +8,41 @@
 # "reserved keys mixed with unreserved keys".
 
 layout:
-  new_paste: Create a new paste
   logo_alt: OpenGoPaste, back to the home page
-  tagline: "As for GoFast, it is better to be hidden!"
+  # The French line puns on "go-fast", the boats that travel unseen, and on the
+  # language the service is written in. Translated word for word it meant
+  # nothing, so the English keeps the joke about Go rather than the boat.
+  tagline: "Written in Go, meant to go unnoticed!"
   # Carries its own markup: splitting the link out of the sentence would pin the
   # word order to English.
   footer: >-
     <a href="/about">OpenGoPaste</a> is a text and source code management
-    service. The data sent by this service are known only by you and the
-    recipient (s) of the link because they are encrypted and decrypted by the
+    service. The data sent by this service is known only to you and the
+    recipient(s) of the link, because it is encrypted and decrypted by the
     browser. At no time does the service know the data that is sent.
 
+# The headings of the error page. The HTTP status stays in the response, where
+# tools read it; it teaches nothing to whoever reads the page.
 error:
-  bad_request: 400 Bad Request
-  not_found: 404 Not Found
-  method_not_allowed: 405 Method Not Allowed
-  too_many_requests: 429 Too Many Requests
-  paste_not_found: this paste is not found
-  rate_limited: Too many requests from your address. Please try again in a minute.
-  request_too_large: This text is too long for the service. Shorten it, or send it in two pastes.
-  # Shown by the browser, never by the server: the ways the encryption can be
-  # unavailable. They live here rather than under a screen because both the
-  # creation page and the reading page run into them.
+  bad_request: Bad request
+  not_found: Page not found
+  method_not_allowed: Action not possible
+  too_many_requests: Too many requests
+  request_too_large_title: Paste too large
+  paste_not_found_title: Paste not found
+  page_not_found: This address matches no page of the service.
+  # A missing paste is the ordinary case, not a breakdown: it expired, or it was
+  # read as many times as it was allowed to be. Saying so spares the reader a
+  # hunt for a mistake of their own, and repeats that the deletion is final.
+  paste_not_found: >-
+    This paste no longer exists. It expired, or it was read as many times as it
+    was allowed to be — either way it has been destroyed, and nobody can bring
+    it back. If you expected it to still be here, check that the link you opened
+    is the whole one.
+  rate_limited: Too many requests from your address. Try again in a minute.
+  request_too_large: This paste is too large for the service. Shorten it, or send it in two.
   javascript_required: >-
-    OpenGoPaste encrypts your text inside your browser, before anything leaves
+    OpenGoPaste encrypts your paste inside your browser, before anything leaves
     it. That needs JavaScript, and it is turned off here. The form stays locked
     rather than send your text unprotected.
   insecure_context: >-
@@ -40,11 +51,13 @@ error:
     and send nothing confidential in the meantime.
   network: The service could not be reached. Check your connection, then try again.
 
+# These are rendered full page: they name what is in the way, never the form
+# field as the code spells it.
 validation:
-  paste_content: Invalid paste content
-  max_read: max_read value must be a positive int
-  max_time: this max_time value is not allowed
-  paste_type: this type value is not allowed
+  paste_content: What reached the server is not what it expected. Reload the page, then try again.
+  max_read: The number of reads has to be a whole number between 0 and 500.
+  max_time: That storage duration is not on offer.
+  paste_type: That format is not on offer.
 
 # Keyed by the duration strings of allowedDurations, so the Go side derives the
 # key instead of repeating the list.
@@ -59,32 +72,47 @@ duration:
 
 # Keyed by the values of allowedPasteTypes, same reason.
 paste_type:
-  text: text
-  code: code
-  markdown: markdown
+  text: Text
+  code: Code
+  markdown: Markdown
 
 index:
-  copy_link: Copy link and send it.
-  link_copied: "Link has been copied !"
+  page_title: New encrypted paste
+  # The decisive moment of the service: the key travels inside the link itself,
+  # after the "#". Lose the link and the paste is lost with it.
+  link_ready: "Your paste is online. Here is its link:"
+  link_warning: >-
+    The key that decrypts this paste is part of the link. Pass it on whole, and
+    keep a copy: neither we nor anyone else can rebuild it.
+  link_copied: Link copied
   copy_action: Copy the link
   copy_failed: The link could not be copied. Select it, then copy it by hand.
   send_by_email: Send the link by email
-  saving: Encrypting and sending…
-  encryption_failed: Your browser could not encrypt this text. Nothing has been sent.
-  save_error: This paste could not be saved. Please try again.
-  expire_in: Expire in
+  saving: Encrypting…
+  encryption_failed: Your browser could not encrypt this paste. Nothing has been sent.
+  save_error: This paste could not be saved. Try again.
+  expire_in: Expires in
   format: Format
-  max_read: Maximum read allowed
+  max_read: Reads allowed
+  # Zero means "no limit", which neither the label nor the field let anyone
+  # guess: people typed 0 believing it locked the paste down.
+  max_read_hint: Enter 0 to leave the number of reads unlimited.
   content: Content
-  save: Save
+  save: Create the link
 
 # The §...§ markers are substituted by app.js once the paste is decrypted: the
 # values are only known in the browser. They have to be spelled exactly as in
 # assets/js/app.js.
+#
+# The wording sidesteps agreeing "read" with a number the catalogue never sees:
+# app.js substitutes text, it cannot pick a plural form.
 paste:
-  reads_and_expiry: This message can be viewed again §nbAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.
-  expiry_only: This message can be viewed up to §dateAvailable§ at §hourAvailable§.
-  last_read: This message is available for the last time. You will not be able to consult it later.
+  page_title: Encrypted paste
+  reads_and_expiry: "Reads left: §nbAvailableRead§, until §dateAvailable§ at §hourAvailable§."
+  expiry_only: This paste stays available until §dateAvailable§ at §hourAvailable§.
+  last_read: >-
+    This is the last read of this paste: it has just been destroyed. Copy it now
+    if you need it.
   # The key never reaches the server: it travels in the fragment of the link,
   # after the "#". A link cut short by a mail client loses it, and no one can
   # recover the content afterwards.
@@ -101,12 +129,13 @@ paste:
     turned off here.
 
 about:
+  page_title: About
   intro: OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.
   encryption: >-
     All texts added via OpenGoPaste are encrypted in AES 256 by the browser
     before being sent to the server so that only the author of these lines and
     the recipient(s) can access the content.
-  built_by: "OpenGoPaste build by:"
+  built_by: "OpenGoPaste built by:"
   role_development: Development and design
   role_design: Icon and logo
   free_software: OpenGoPaste is free software.

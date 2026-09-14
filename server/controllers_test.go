@@ -61,7 +61,7 @@ func TestIndexControllerIsLanguageIsolated(t *testing.T) {
         expectedLabel  string
     }{
         {"fr", "fr", "Expire dans"},
-        {"en-US", "en-u-rg-uszzzz", "Expire in"},
+        {"en-US", "en-u-rg-uszzzz", "Expires in"},
     }
 
     var waitGroup sync.WaitGroup

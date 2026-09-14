@@ -1,37 +1,50 @@
 layout:
-  new_paste: Créer un nouveau paste
   logo_alt: OpenGoPaste, retour à l'accueil
   tagline: "Comme pour le GoFast, il est préférable d'être caché !"
   footer: >-
     <a href="/about">OpenGoPaste</a> est un service de gestion d'extraits de
     texte et de code source. Les données envoyées par ce service ne sont connues
     que par vous seul et le(s) destinataire(s) du lien car elles sont chiffrées
-    et déchiffrées par le navigateur. À aucun moment le service ne connait les
+    et déchiffrées par le navigateur. À aucun moment le service ne connaît les
     données qui sont envoyées.
 
+# Les titres portés par la page d'erreur. Le code HTTP reste dans la réponse,
+# où les outils le lisent ; il n'apprend rien à qui lit la page.
 error:
-  bad_request: 400 Mauvaise requête
-  not_found: 404 Page non trouvée
-  method_not_allowed: 405 Méthode non autorisée
-  too_many_requests: 429 Trop de requêtes
-  paste_not_found: Ce contenu n'a pas été trouvé
-  rate_limited: Trop de requêtes depuis votre adresse. Veuillez réessayer dans une minute.
-  request_too_large: Ce texte est trop long pour le service. Raccourcissez-le, ou envoyez-le en deux fois.
+  bad_request: Demande incorrecte
+  not_found: Page introuvable
+  method_not_allowed: Action impossible
+  too_many_requests: Trop de demandes
+  request_too_large_title: Contenu trop volumineux
+  paste_not_found_title: Contenu introuvable
+  page_not_found: Cette adresse ne correspond à aucune page du service.
+  # Un contenu absent est le cas courant, pas une panne : il a expiré, ou il a
+  # été lu le nombre de fois prévu. Le dire évite de chercher une erreur de son
+  # côté, et rappelle au passage que la destruction est définitive.
+  paste_not_found: >-
+    Ce contenu n'existe plus. Il a expiré, ou il a été lu le nombre de fois
+    prévu — dans les deux cas il a été détruit, et personne ne peut le
+    retrouver. Si vous pensez qu'il devrait encore être là, vérifiez que le
+    lien que vous avez ouvert est complet.
+  rate_limited: Trop de demandes depuis votre adresse. Réessayez dans une minute.
+  request_too_large: Ce contenu est trop volumineux pour le service. Raccourcissez-le, ou envoyez-le en deux fois.
   javascript_required: >-
-    OpenGoPaste chiffre votre texte dans votre navigateur, avant que quoi que ce
-    soit n'en sorte. Cela demande JavaScript, qui est désactivé ici. Le
-    formulaire reste verrouillé plutôt que d'envoyer votre texte en clair.
+    OpenGoPaste chiffre votre contenu dans votre navigateur, avant que quoi que
+    ce soit n'en sorte. Cela demande JavaScript, qui est désactivé ici. Le
+    formulaire reste verrouillé plutôt que d'envoyer votre contenu en clair.
   insecure_context: >-
     Votre navigateur ne chiffre que sur une connexion sécurisée, et cette
     adresse n'en est pas une. Rien ne peut être protégé ici : prévenez la
     personne qui héberge ce service, et n'envoyez rien de confidentiel d'ici là.
   network: Le service n'a pas pu être joint. Vérifiez votre connexion, puis réessayez.
 
+# Ces messages s'affichent en pleine page : ils nomment ce qui bloque, jamais le
+# champ du formulaire tel que le code l'appelle.
 validation:
-  paste_content: Contenu invalide
-  max_read: La valeur de max_read doit être un entier positif
-  max_time: La valeur de max_time n'est pas autorisée
-  paste_type: La valeur du type n'est pas autorisée
+  paste_content: Le contenu reçu n'est pas celui attendu. Rechargez la page, puis réessayez.
+  max_read: Le nombre de lectures doit être un nombre entier compris entre 0 et 500.
+  max_time: Cette durée de conservation n'est pas proposée.
+  paste_type: Ce format n'est pas proposé.
 
 duration:
   5m: 5 minutes
@@ -48,24 +61,43 @@ paste_type:
   markdown: Markdown
 
 index:
-  copy_link: Copier le lien et envoyer le.
-  link_copied: "Le lien a été copié !"
+  page_title: Nouveau contenu chiffré
+  # Le moment décisif du service : la clé de déchiffrement voyage dans le lien
+  # lui-même, après le « # ». Un lien perdu, et le contenu l'est aussi.
+  link_ready: "Votre contenu est en ligne. Voici son lien :"
+  link_warning: >-
+    La clé qui déchiffre ce contenu fait partie du lien. Transmettez-le en
+    entier, et gardez-en une copie : ni nous ni personne ne pourra le
+    reconstituer.
+  link_copied: Lien copié
   copy_action: Copier le lien
   copy_failed: Le lien n'a pas pu être copié. Sélectionnez-le, puis copiez-le à la main.
   send_by_email: Envoyer le lien par courriel
-  saving: Chiffrement et envoi en cours…
-  encryption_failed: Votre navigateur n'a pas pu chiffrer ce texte. Rien n'a été envoyé.
-  save_error: Ce contenu n'a pas pu être enregistré. Veuillez réessayer.
+  saving: Chiffrement en cours…
+  encryption_failed: Votre navigateur n'a pas pu chiffrer ce contenu. Rien n'a été envoyé.
+  save_error: Ce contenu n'a pas pu être enregistré. Réessayez.
   expire_in: Expire dans
   format: Format
-  max_read: Nombre de lecture maximum
+  max_read: Lectures autorisées
+  # Zéro veut dire « aucune limite », ce que ni le libellé ni le champ ne
+  # laissaient deviner : on saisissait 0 en croyant tout verrouiller.
+  max_read_hint: Indiquez 0 pour ne pas limiter le nombre de lectures.
   content: Contenu
-  save: Enregistrer
+  save: Créer le lien
 
+# Les repères §...§ sont remplacés par app.js une fois le contenu déchiffré : le
+# navigateur seul connaît ces valeurs. Ils doivent s'écrire exactement comme
+# dans assets/js/app.js.
+#
+# La tournure évite d'accorder « lecture » avec un nombre que le catalogue ne
+# voit pas : app.js substitue du texte, il ne sait pas choisir un pluriel.
 paste:
-  reads_and_expiry: Ce message pourra être consulté encore §nbAvailableRead§ fois ou jusqu'au §dateAvailable§ à §hourAvailable§.
-  expiry_only: Ce message pourra être consulté jusqu'au §dateAvailable§ à §hourAvailable§.
-  last_read: Ce message est disponible pour la dernière fois. Vous ne pourrez plus le consulter par la suite.
+  page_title: Contenu chiffré
+  reads_and_expiry: "Lectures restantes : §nbAvailableRead§, jusqu'au §dateAvailable§ à §hourAvailable§."
+  expiry_only: Ce contenu reste disponible jusqu'au §dateAvailable§ à §hourAvailable§.
+  last_read: >-
+    C'est la dernière lecture de ce contenu : il vient d'être détruit. Copiez-le
+    maintenant si vous en avez besoin.
   link_incomplete: >-
     Ce lien est incomplet : la clé qui déverrouille le contenu n'y figure pas.
     Demandez le lien entier, d'un seul tenant, à la personne qui vous l'a
@@ -79,13 +111,14 @@ paste:
     est désactivé ici.
 
 about:
+  page_title: À propos
   intro: >-
-    OpenGoPaste est un logiciel libre permettant mettre en ligne de manière
+    OpenGoPaste est un logiciel libre permettant de mettre en ligne de manière
     sécurisée des notes, du code ou des textes afin de les partager.
   encryption: >-
     L'ensemble des textes ajoutés via OpenGoPaste sont chiffrés en AES 256 par
-    le navigateur avant d'être envoyés au serveur afin que seul l'auteur de ces
-    lignes et le ou les destinataires ne puissent accéder au contenu.
+    le navigateur avant d'être envoyés au serveur, afin que seuls l'auteur de
+    ces lignes et le ou les destinataires puissent accéder au contenu.
   built_by: "OpenGoPaste a été réalisé par :"
   role_development: Développement et design
   role_design: Icône et logo

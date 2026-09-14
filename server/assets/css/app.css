@@ -181,6 +181,14 @@ main {
         margin-inline-start: var(--default-margin-top);
     }
 
+    /* The key lives in the link: losing it loses the paste, which is worth
+       saying next to the link rather than in the documentation. */
+    .link-warning {
+        width: 100%;
+        margin-block: var(--default-margin-top) 0;
+        font-size: 0.9rem;
+    }
+
     .copy-feedback {
         width: 100%;
 
@@ -297,6 +305,24 @@ form {
 
         label {
             width: 50%;
+        }
+    }
+}
+
+/* A field whose meaning needs a word: the hint sits under the pair, across the
+   whole column, rather than squeezed between the label and the input. */
+.form-item--with-hint {
+    flex-wrap: wrap;
+
+    .hint {
+        width: 100%;
+        margin-block-start: 0.25rem;
+        font-size: 0.85rem;
+    }
+
+    @media screen and (max-width: 768px) {
+        .hint {
+            margin-block-start: 0.35rem;
         }
     }
 }
