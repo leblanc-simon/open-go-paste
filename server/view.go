@@ -71,12 +71,15 @@ type RenderData struct {
     // Dir feeds the dir attribute of the document, derived from the negotiated
     // language rather than pinned to "ltr" in the layout.
     Dir string
+    // Title names this page rather than the service, which every page used to
+    // do alike.
+    Title string
 }
 
 // Render writes the view for a single request. The parsed template is never
 // executed as is: every request renders a clone carrying its own translation
 // functions, so no request state is shared between goroutines.
-func (v *View) Render(w http.ResponseWriter, locale *i18n.Localizer, data interface{}, code int) error {
+func (v *View) Render(w http.ResponseWriter, locale *i18n.Localizer, title string, data interface{}, code int) error {
     tmpl, err := v.Template.Clone()
     if err != nil {
         return err
@@ -89,6 +92,7 @@ func (v *View) Render(w http.ResponseWriter, locale *i18n.Localizer, data interf
         CustomCss: config.Paste.CustomCss,
         Locale: locale,
         Dir: TextDirection(locale.Lang()),
+        Title: title,
     }
 
     // Render into a buffer first: a template failure must not leave a half

@@ -36,8 +36,13 @@ func InitTemplateViews() {
 
 // render sends the view to the client, falling back to a plain 500 when the
 // template itself fails. Render leaves the response untouched in that case.
-func render(w http.ResponseWriter, view *View, locale *i18n.Localizer, data interface{}, code int) {
-	if err := view.Render(w, locale, data, code); nil != err {
+//
+// title names the page inside the browser tab and the history. Every page used
+// to answer "OpenGoPaste", so a failed read was indistinguishable from a
+// successful one in a list of tabs — and to a screen reader announcing the new
+// page.
+func render(w http.ResponseWriter, view *View, locale *i18n.Localizer, title string, data interface{}, code int) {
+	if err := view.Render(w, locale, title, data, code); nil != err {
 		slog.Error("fail to render view", "err", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
@@ -58,23 +63,32 @@ func errorTitle(locale *i18n.Localizer, code int) string {
 		return locale.T("error.method_not_allowed")
 	case http.StatusTooManyRequests:
 		return locale.T("error.too_many_requests")
+	case http.StatusRequestEntityTooLarge:
+		return locale.T("error.request_too_large_title")
 	}
 
 	return http.StatusText(code)
 }
 
 func ErrorHandler(w http.ResponseWriter, locale *i18n.Localizer, message string, code int) {
+	renderError(w, locale, errorTitle(locale, code), message, code)
+}
+
+// renderError is for the pages whose heading the status code alone does not
+// describe: a destroyed paste answers 404 like a wrong address, but "page not
+// found" is not what happened to it.
+func renderError(w http.ResponseWriter, locale *i18n.Localizer, title string, message string, code int) {
 	errorData := ErrorData{
-		Title:   errorTitle(locale, code),
+		Title:   title,
 		Message: message,
 	}
 
-	render(w, errorView, locale, errorData, code)
+	render(w, errorView, locale, title, errorData, code)
 }
 
 func NotFoundController(w http.ResponseWriter, r *http.Request) {
 	locale := NewLocale(r)
-	ErrorHandler(w, locale, locale.T("error.not_found"), http.StatusNotFound)
+	ErrorHandler(w, locale, locale.T("error.page_not_found"), http.StatusNotFound)
 }
 
 // RateLimitController answers the requests the limiter turned away. The quota is
@@ -86,7 +100,9 @@ func RateLimitController(w http.ResponseWriter, r *http.Request) {
 }
 
 func AboutController(w http.ResponseWriter, r *http.Request) {
-	render(w, aboutView, NewLocale(r), nil, http.StatusOK)
+	locale := NewLocale(r)
+
+	render(w, aboutView, locale, locale.T("about.page_title"), nil, http.StatusOK)
 }
 
 type IndexData struct {
@@ -108,7 +124,7 @@ func IndexController(w http.ResponseWriter, r *http.Request) {
 		MaxContentBytes: maxPasteContentBytes,
 	}
 
-	render(w, indexView, locale, indexData, http.StatusOK)
+	render(w, indexView, locale, locale.T("index.page_title"), indexData, http.StatusOK)
 }
 
 // parseSubmission reads the body of a paste creation, whether it came as
@@ -149,11 +165,17 @@ func GetPasteController(w http.ResponseWriter, r *http.Request) {
 			slog.Error("fail to read paste", "err", err)
 		}
 
-		ErrorHandler(w, locale, locale.T("error.paste_not_found"), http.StatusNotFound)
+		renderError(
+			w,
+			locale,
+			locale.T("error.paste_not_found_title"),
+			locale.T("error.paste_not_found"),
+			http.StatusNotFound,
+		)
 		return
 	}
 
-	render(w, pasteView, locale, pasteData, http.StatusOK)
+	render(w, pasteView, locale, locale.T("paste.page_title"), pasteData, http.StatusOK)
 }
 
 func PostPasteController(w http.ResponseWriter, r *http.Request) {

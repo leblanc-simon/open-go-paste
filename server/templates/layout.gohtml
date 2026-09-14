@@ -3,7 +3,7 @@
 <html lang="{{ .Locale.Lang }}" dir="{{ .Dir }}">
     <head>
         <meta charset="utf-8">
-        <title>OpenGoPaste</title>
+        <title>{{ if .Title }}{{ .Title }} · {{ end }}OpenGoPaste</title>
         <meta name="robots" content="noindex">
         <meta name="referrer" content="no-referrer">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
