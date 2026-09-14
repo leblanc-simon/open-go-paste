@@ -167,7 +167,11 @@ main {
     }
 
     .link {
-        flex: 1;
+        /* The basis has to stay above zero: the title above takes the whole
+           first line, and a flex item whose basis is 0 always fits on the line
+           in progress — the link kept being pinned to the end of the title row
+           at zero width, with its url overflowing off screen. */
+        flex: 1 1 60%;
         /* Without this a flex item refuses to shrink below the width of its
            content, and a paste url is a single 200 character word. */
         min-width: 0;
@@ -247,6 +251,9 @@ form {
     fieldset {
         display: flex;
         flex-wrap: wrap;
+        /* Each item keeps its own height: the one carrying a hint is taller,
+           and stretching its neighbours pushed their centred contents down. */
+        align-items: flex-start;
         gap: 0 1rem;
         width: 100%;
         min-width: 0;
@@ -272,6 +279,9 @@ form {
     input,
     select,
     textarea {
+        /* Otherwise min-height applies to the content box and the padding adds
+           to it: the input stood 56px tall next to 44px selects. */
+        box-sizing: border-box;
         outline: none;
         /* A field has to be discernible from the page behind it: #ddd on white
            was a ratio of 1.27:1. */
@@ -348,6 +358,7 @@ form {
 }
 
 button {
+    box-sizing: border-box;
     min-height: 44px;
     padding: 0.5rem 0.8rem;
     color: var(--primary-action-text-color);
