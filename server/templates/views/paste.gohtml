@@ -5,11 +5,31 @@
 {{- end -}}
 
 {{- define "content" -}}
-    <div class="paste-information show"
+    {{/* Whatever goes wrong here goes wrong inside the browser: the server has
+    never held the key. These are the three ways a reader can end up with
+    nothing, each with its own explanation. */}}
+    <div id="messages" hidden
+        data-link-incomplete="{{ T "paste.link_incomplete" }}"
+        data-decryption-failed="{{ T "paste.decryption_failed" }}"
+        data-insecure-context="{{ T "error.insecure_context" }}"
+    ></div>
+
+    {{/* Without JavaScript the content stays where it is, encrypted in a
+    data attribute, and the page would otherwise look simply empty. */}}
+    <noscript>
+        <p class="notice notice--blocking">{{ T "paste.javascript_required" }}</p>
+    </noscript>
+
+    {{/* Empty until app.js fills it, so it stays out of the page rather than
+    showing an empty coloured band. */}}
+    <div class="paste-information" role="status" hidden
         data-information="{{ T "paste.reads_and_expiry" }}"
         data-information-no-nb-read="{{ T "paste.expiry_only" }}"
         data-last-read="{{ T "paste.last_read" }}"
     ></div>
+
+    <p id="paste-error" class="notice notice--error" role="alert" hidden></p>
+
     {{/* The paste is handed over through data-* attributes rather than an inline
     script, which is what allows a Content-Security-Policy without
     'unsafe-inline'. ExpireTime is formatted as RFC 3339 so that the browser
@@ -25,10 +45,10 @@
 
 {{- define "javascripts" -}}
     {{- if or (eq .Type "code") (eq .Type "markdown") -}}
-    <script src="/static/js/highlight.min.js"></script>
+    <script src="/static/js/highlight.min.js" defer></script>
     {{- end -}}
     {{- if eq .Type "markdown" -}}
-    <script src="/static/js/showdown.min.js"></script>
+    <script src="/static/js/showdown.min.js" defer></script>
     {{- end -}}
     <script src="/static/js/app.js" type="module"></script>
 {{- end -}}

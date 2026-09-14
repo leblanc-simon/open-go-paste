@@ -1,6 +1,6 @@
 {{- define "layout" -}}
 <!DOCTYPE html>
-<html lang="{{ .Locale.Lang }}" dir="ltr">
+<html lang="{{ .Locale.Lang }}" dir="{{ .Dir }}">
     <head>
         <meta charset="utf-8">
         <title>OpenGoPaste</title>
@@ -16,7 +16,7 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="msapplication-config" content="/static/img/favicon/browserconfig.xml">
         <meta name="theme-color" content="#662d91">
-        <link rel="prefetch" href="/static/css/color.css">
+        <link rel="stylesheet" href="/static/css/color.css">
         <link rel="stylesheet" href="/static/css/app.css">
         {{- template "stylesheets" .Data -}}
         {{- if (ne .CustomCss "") -}}
@@ -26,16 +26,19 @@
     <body>
         <header>
             <div class="logo">
-                <a href="/" title="{{ T "layout.new_paste" }}">
-                    <img width="88" height="88" src="/static/img/logo3.svg" />
+                <a href="/">
+                    <img width="88" height="88" src="/static/img/logo3.svg" alt="{{ T "layout.logo_alt" }}">
                 </a>
             </div>
             <div class="title">
                 <h1>OpenGo<span class="title">Paste</span></h1>
-                <summary>{{ T "layout.tagline" }}</summary>
+                <p class="tagline">{{ T "layout.tagline" }}</p>
             </div>
         </header>
         <main>
+            {{/* The pages that need JavaScript carry their own noscript notice:
+            about and the error page work perfectly well without it, and telling
+            their readers that a form is locked would be a lie. */}}
             {{- template "content" .Data -}}
         </main>
         <footer>

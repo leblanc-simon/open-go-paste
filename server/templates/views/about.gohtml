@@ -4,9 +4,11 @@
 
 {{- define "content" -}}
     <div id="about">
+        {{/* Decorative: the licences and the credits below say in words what
+        these two drawings show. */}}
         <div class="logos">
-            <div class="logo"><img src="/static/img/logo.svg" width="350" /></div>
-            <div class="logo"><img src="/static/img/logo2.svg" width="350" /></div>
+            <div class="logo"><img src="/static/img/logo.svg" width="350" height="350" alt=""></div>
+            <div class="logo"><img src="/static/img/logo2.svg" width="350" height="350" alt=""></div>
         </div>
         <p class="description">
             {{ T "about.intro" }}
@@ -20,27 +22,30 @@
             <div class="author design" data-content="{{ T "about.role_design" }}">Lucie Lenfant</div>
         </div>
         <div class="open-source">
-            <p>
-                {{ T "about.free_software" }}
-                <ul>
-                    <li>{{ TH "about.code_license" }}</li>
-                    <li>{{ TH "about.logos_license" }}</li>
-                </ul>
-            </p>
+            <p>{{ T "about.free_software" }}</p>
             <ul>
-                <li><a class="link" href="https://github.com/leblanc-simon/open-go-paste"
+                <li>{{ TH "about.code_license" }}</li>
+                <li>{{ TH "about.logos_license" }}</li>
+            </ul>
+            <ul>
+                <li>
+                    <a class="link" href="https://github.com/leblanc-simon/open-go-paste"
                         title="{{ T "about.show_source" }}">{{ T "about.source_software" }}</a>
                 </li>
-                <li><a class="link" href="/static/img/logo.svg"
+                <li>
+                    <a class="link" href="/static/img/logo.svg"
                         title="{{ T "about.show_source" }}">{{ T "about.source_logo_official" }}</a>
                 </li>
-                <li><a class="link" href="/static/img/logo3.svg"
+                <li>
+                    <a class="link" href="/static/img/logo3.svg"
                         title="{{ T "about.show_source" }}">{{ T "about.source_logo_alternative" }}</a>
                 </li>
-                <li><a class="link" href="/static/img/logo2.svg"
+                <li>
+                    <a class="link" href="/static/img/logo2.svg"
                         title="{{ T "about.show_source" }}">{{ T "about.source_logo_unofficial" }}</a>
-                        ({{ TH "about.logo_unofficial_credit" }})
+                    ({{ TH "about.logo_unofficial_credit" }})
                 </li>
+            </ul>
         </div>
     </div>
 {{- end -}}

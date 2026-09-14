@@ -4,9 +4,11 @@
 
 {{define "content"}}
 <div id="error">
-    <h1 class="title">{{.Title}}</h1>
+    {{/* The layout already carries the h1 of the service: this is the heading
+    of the page inside it, not a second top level one. */}}
+    <h2 class="title">{{.Title}}</h2>
     <div class="message">{{.Message}}</div>
-    <div class="logo"><img src="/static/img/logo2.svg" width="350" /></div>
+    <div class="logo"><img src="/static/img/logo2.svg" width="350" height="350" alt=""></div>
 </div>
 {{end}}
 
