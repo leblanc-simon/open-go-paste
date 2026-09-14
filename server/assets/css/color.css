@@ -4,5 +4,12 @@
     --secondary-background-color: #666;
     --secondary-background-gradiant: linear-gradient(#7e7e7e, #aaa);
     --secondary-text-color: #333;
+    /* Field outlines have to reach 3:1 against the page to be discernible;
+       #ddd, used until then, sat at 1.27:1. */
+    --field-border-color: #8a8391;
+    /* Referenced by the error notices, which used to fall back to a literal
+       because these two were never declared. */
+    --error-background-color: #a3241c;
+    --error-text-color: #fff;
     --default-margin-top: 1rem;
 }

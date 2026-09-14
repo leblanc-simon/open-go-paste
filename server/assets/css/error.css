@@ -1,14 +1,21 @@
-@import url(color.css);
+/* color.css is linked from the layout, ahead of this file. */
 
-#error .title {
-    color: var(--primary-action-background-color);
-}
+#error {
+    .title {
+        color: var(--primary-action-background-color);
+    }
 
-#error .message {
-    margin: var(--default-margin-top) 0;
-}
+    .message {
+        margin: var(--default-margin-top) 0;
+    }
 
-#error .logo {
-    text-align: center;
-    margin-top: calc(var(--default-margin-top) * 5);
+    .logo {
+        margin-top: calc(var(--default-margin-top) * 5);
+        text-align: center;
+
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    }
 }

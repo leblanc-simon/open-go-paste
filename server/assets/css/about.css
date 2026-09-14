@@ -1,74 +1,84 @@
-@import url(color.css);
+/* color.css is linked from the layout, ahead of this file. */
 
 #about {
-	font-size: 1.2rem;
-}
+    font-size: 1.2rem;
 
-#about .logos, #about .authors {
-    display: flex;
-    flex-direction: row;
-	margin-top: 1rem;
-	margin-bottom: 4rem;
-}
+    .logos,
+    .authors {
+        display: flex;
+        flex-direction: row;
+        margin-top: 1rem;
+        margin-bottom: 4rem;
+    }
 
-#about .authors {
-	margin-top: 4rem;
-	font-size: 1.2rem
-}
+    .authors {
+        margin-top: 4rem;
+        font-size: 1.2rem;
+    }
 
-#about .author {
-	position: relative;
-	font-weight: bold;
-    color: var(--primary-action-background-color);
-}
+    .logo,
+    .author {
+        flex: 1;
+        min-width: 0;
+        text-align: center;
+    }
 
-#about .author::after {
-	content: attr(data-content);
-	position: absolute;
-	font-size: 1.1rem;
-    font-weight: normal;
-    bottom: -2rem;
-    left: 0;
-    right: 0;
-    font-style: italic;
-}
+    /* The role sits in the flow under the name rather than in an absolutely
+       positioned ::after: a translated role is not the length of the English
+       one, and the overlap only showed up in the longer language. */
+    .author {
+        font-weight: bold;
+        color: var(--primary-action-background-color);
 
-#about .logo, #about .author {
-    flex: 1;
-	text-align: center;
-}
+        &::after {
+            content: attr(data-content);
+            display: block;
+            margin-block-start: 0.25rem;
+            font-size: 1.1rem;
+            font-weight: normal;
+            font-style: italic;
+        }
+    }
 
-#about .description {
-	text-align: justify;
-}
+    .description {
+        /* Left aligned: justification without hyphenation opens rivers of white
+           space, and the measure here is wide. */
+        text-align: start;
+    }
 
-#about a, #about a:link, #about a:visited, #about a:hover {
-	color: var(--primary-action-background-color);
-	text-decoration: none;
-}
-#about a:hover {
-	text-decoration: underline;
-}
+    a {
+        color: var(--primary-action-background-color);
+        text-decoration: none;
 
-#about .open-source {
-	margin-top: 5rem;
-	border-top: 1px dashed var(--primary-action-background-color);
-}
+        &:link,
+        &:visited {
+            color: var(--primary-action-background-color);
+        }
 
-@media screen and (max-width: 768px) {
-	#about .logos, #about .authors {
-    	flex-direction: column;
-	}
+        &:hover {
+            text-decoration: underline;
+        }
+    }
 
-	#about .logo, #about .author {
-		margin-bottom: 2rem;
-	}
+    .open-source {
+        margin-top: 5rem;
+        border-top: 1px dashed var(--primary-action-background-color);
+    }
 
-	#about .logo img {
-		max-width: 100%;
-	}
+    @media screen and (max-width: 768px) {
+        .logos,
+        .authors {
+            flex-direction: column;
+        }
 
-	#about .author::after {
-		bottom: -1.3rem;
-	}
+        .logo,
+        .author {
+            margin-bottom: 2rem;
+        }
+
+        .logo img {
+            max-width: 100%;
+            height: auto;
+        }
+    }
 }
