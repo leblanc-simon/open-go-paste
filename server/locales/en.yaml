@@ -9,6 +9,7 @@
 
 layout:
   new_paste: Create a new paste
+  logo_alt: OpenGoPaste, back to the home page
   tagline: "As for GoFast, it is better to be hidden!"
   # Carries its own markup: splitting the link out of the sentence would pin the
   # word order to English.
@@ -25,6 +26,19 @@ error:
   too_many_requests: 429 Too Many Requests
   paste_not_found: this paste is not found
   rate_limited: Too many requests from your address. Please try again in a minute.
+  request_too_large: This text is too long for the service. Shorten it, or send it in two pastes.
+  # Shown by the browser, never by the server: the ways the encryption can be
+  # unavailable. They live here rather than under a screen because both the
+  # creation page and the reading page run into them.
+  javascript_required: >-
+    OpenGoPaste encrypts your text inside your browser, before anything leaves
+    it. That needs JavaScript, and it is turned off here. The form stays locked
+    rather than send your text unprotected.
+  insecure_context: >-
+    Your browser only encrypts over a secure connection, and this address is not
+    one. Nothing can be protected here: please warn whoever runs this service,
+    and send nothing confidential in the meantime.
+  network: The service could not be reached. Check your connection, then try again.
 
 validation:
   paste_content: Invalid paste content
@@ -52,6 +66,11 @@ paste_type:
 index:
   copy_link: Copy link and send it.
   link_copied: "Link has been copied !"
+  copy_action: Copy the link
+  copy_failed: The link could not be copied. Select it, then copy it by hand.
+  send_by_email: Send the link by email
+  saving: Encrypting and sending…
+  encryption_failed: Your browser could not encrypt this text. Nothing has been sent.
   save_error: This paste could not be saved. Please try again.
   expire_in: Expire in
   format: Format
@@ -66,6 +85,20 @@ paste:
   reads_and_expiry: This message can be viewed again §nbAvailableRead§ times or up to §dateAvailable§ at §hourAvailable§.
   expiry_only: This message can be viewed up to §dateAvailable§ at §hourAvailable§.
   last_read: This message is available for the last time. You will not be able to consult it later.
+  # The key never reaches the server: it travels in the fragment of the link,
+  # after the "#". A link cut short by a mail client loses it, and no one can
+  # recover the content afterwards.
+  link_incomplete: >-
+    This link is incomplete: the key that unlocks the content is missing from
+    it. Ask whoever sent it to you for the whole link, in one piece — some mail
+    and chat programs cut long links.
+  decryption_failed: >-
+    This content could not be unlocked: the key carried by this link does not
+    open it. The link may have been altered on its way to you.
+  javascript_required: >-
+    This content is encrypted, and only your browser holds what unlocks it —
+    the server never sees the key. Unlocking it needs JavaScript, which is
+    turned off here.
 
 about:
   intro: OpenGoPaste is free software that allows you to securely put notes, code or texts online for sharing.

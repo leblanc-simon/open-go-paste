@@ -1,5 +1,6 @@
 layout:
   new_paste: Créer un nouveau paste
+  logo_alt: OpenGoPaste, retour à l'accueil
   tagline: "Comme pour le GoFast, il est préférable d'être caché !"
   footer: >-
     <a href="/about">OpenGoPaste</a> est un service de gestion d'extraits de
@@ -15,6 +16,16 @@ error:
   too_many_requests: 429 Trop de requêtes
   paste_not_found: Ce contenu n'a pas été trouvé
   rate_limited: Trop de requêtes depuis votre adresse. Veuillez réessayer dans une minute.
+  request_too_large: Ce texte est trop long pour le service. Raccourcissez-le, ou envoyez-le en deux fois.
+  javascript_required: >-
+    OpenGoPaste chiffre votre texte dans votre navigateur, avant que quoi que ce
+    soit n'en sorte. Cela demande JavaScript, qui est désactivé ici. Le
+    formulaire reste verrouillé plutôt que d'envoyer votre texte en clair.
+  insecure_context: >-
+    Votre navigateur ne chiffre que sur une connexion sécurisée, et cette
+    adresse n'en est pas une. Rien ne peut être protégé ici : prévenez la
+    personne qui héberge ce service, et n'envoyez rien de confidentiel d'ici là.
+  network: Le service n'a pas pu être joint. Vérifiez votre connexion, puis réessayez.
 
 validation:
   paste_content: Contenu invalide
@@ -39,6 +50,11 @@ paste_type:
 index:
   copy_link: Copier le lien et envoyer le.
   link_copied: "Le lien a été copié !"
+  copy_action: Copier le lien
+  copy_failed: Le lien n'a pas pu être copié. Sélectionnez-le, puis copiez-le à la main.
+  send_by_email: Envoyer le lien par courriel
+  saving: Chiffrement et envoi en cours…
+  encryption_failed: Votre navigateur n'a pas pu chiffrer ce texte. Rien n'a été envoyé.
   save_error: Ce contenu n'a pas pu être enregistré. Veuillez réessayer.
   expire_in: Expire dans
   format: Format
@@ -50,6 +66,17 @@ paste:
   reads_and_expiry: Ce message pourra être consulté encore §nbAvailableRead§ fois ou jusqu'au §dateAvailable§ à §hourAvailable§.
   expiry_only: Ce message pourra être consulté jusqu'au §dateAvailable§ à §hourAvailable§.
   last_read: Ce message est disponible pour la dernière fois. Vous ne pourrez plus le consulter par la suite.
+  link_incomplete: >-
+    Ce lien est incomplet : la clé qui déverrouille le contenu n'y figure pas.
+    Demandez le lien entier, d'un seul tenant, à la personne qui vous l'a
+    envoyé — certains logiciels de messagerie coupent les liens longs.
+  decryption_failed: >-
+    Ce contenu n'a pas pu être déverrouillé : la clé portée par ce lien ne
+    l'ouvre pas. Le lien a peut-être été modifié en chemin.
+  javascript_required: >-
+    Ce contenu est chiffré, et seul votre navigateur détient de quoi l'ouvrir —
+    le serveur ne voit jamais la clé. Le déverrouiller demande JavaScript, qui
+    est désactivé ici.
 
 about:
   intro: >-
