@@ -23,8 +23,10 @@ function messages() {
     };
 }
 
-// highlight.js renamed highlightBlock to highlightElement in 10.7, and the
-// bundle shipped here is still a 9.x.
+// highlight.js renamed highlightBlock to highlightElement in 10.7. The bundle
+// shipped here is an 11.x, which still carries the old name as a deprecated
+// alias; the branch survives for an operator serving an older one from
+// OPEN_GO_PASTE_ASSETS_FOLDER.
 function highlight(element) {
     // The bundle is loaded with defer and only for the paste types that need
     // it: a network hiccup on it must not take the whole paste down with it.
