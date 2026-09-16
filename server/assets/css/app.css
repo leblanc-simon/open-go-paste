@@ -317,22 +317,33 @@ form {
             width: 50%;
         }
     }
-}
 
-/* A field whose meaning needs a word: the hint sits under the pair, across the
-   whole column, rather than squeezed between the label and the input. */
-.form-item--with-hint {
-    flex-wrap: wrap;
+    /* A field whose meaning needs a word. Two columns rather than a wrapping
+       row: the hint belongs under the field it explains, on the same edge, and
+       a wrapped flex line would have started it under the label instead. */
+    &.form-item--with-hint {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 1rem;
+        row-gap: 0.25rem;
 
-    .hint {
-        width: 100%;
-        margin-block-start: 0.25rem;
-        font-size: 0.85rem;
-    }
+        label {
+            /* The column gap already separates the pair. */
+            margin-inline-end: 0;
+        }
 
-    @media screen and (max-width: 768px) {
         .hint {
-            margin-block-start: 0.35rem;
+            grid-column: 2;
+            font-size: 0.85rem;
+        }
+
+        @media screen and (max-width: 768px) {
+            grid-template-columns: 50% 1fr;
+
+            label {
+                /* The column carries the width here. */
+                width: auto;
+            }
         }
     }
 }
