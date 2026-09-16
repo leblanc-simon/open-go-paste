@@ -46,7 +46,10 @@ environment otherwise. `-c <path>` points at another file, and `./open-go-paste
 * Customize listen IP : `OPEN_GO_PASTE_HOST=0.0.0.0`
 * Customize listen port : `OPEN_GO_PASTE_PORT=3000`
 * Customize datas directory : `OPEN_GO_PASTE_DATAS_FOLDER=/var/open-go-paste/datas`
-* Customize CSS : `OPEN_GO_PASTE_CUSTOM_CSS="/static/css/custom.css"`
+* Customize CSS : `OPEN_GO_PASTE_CUSTOM_CSS="/static/css/custom.css"` (redefine
+  the tokens of `color.css`; keep every asset local, since a remote image or
+  font is blocked by the CSP and would hand the address of each visitor to a
+  third party)
 * Override the embedded assets : `OPEN_GO_PASTE_ASSETS_FOLDER=/var/open-go-paste/assets`
 * Customize clean datas CRON : `OPEN_GO_PASTE_CRON="0 0 0 * * *"` (CRON syntax with seconds)
 * Requests per minute per client : `OPEN_GO_PASTE_RATE_LIMIT=100` (`0` disables the quota)
