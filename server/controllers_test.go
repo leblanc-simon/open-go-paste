@@ -15,6 +15,11 @@ import (
 func init() {
     InitLocales()
     InitTemplateViews()
+
+    // RunServer fingerprints the assets before anything can be rendered; the
+    // tests reach the controllers directly, so they have to do it themselves or
+    // every page would come out with unstamped urls.
+    computeAssetVersions()
 }
 
 func newLocaleForTest(t *testing.T, acceptLanguage string) *i18n.Localizer {

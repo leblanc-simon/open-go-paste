@@ -86,8 +86,13 @@
 {{- define "javascripts" -}}
     {{/* app.js imports these two, so without the hint the browser only finds
     out they exist once it has parsed app.js: one round trip in series before
-    anything can be decrypted. */}}
+    anything can be decrypted.
+
+    These two urls stay unstamped, unlike every other asset: app.js imports them
+    relatively and a module url carries no query along, so a stamped hint would
+    preload something the import never asks for and the file would travel twice.
+    TestTheModuleHintsMatchWhatTheScriptImports holds the two together. */}}
     <link rel="modulepreload" href="/static/js/crypto.js">
     <link rel="modulepreload" href="/static/js/sanitize.js">
-    <script src="/static/js/app.js" type="module"></script>
+    <script src="{{ asset "/js/app.js" }}" type="module"></script>
 {{- end -}}

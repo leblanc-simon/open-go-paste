@@ -36,7 +36,12 @@ func NewView(layout string, files ...string) *View {
     // implementation depends on the language negotiated for the request: Render
     // rebinds them on a clone. The stubs echo the message id, which is also what
     // the bundle does for a missing translation.
+    //
+    // "asset" needs no such treatment: the fingerprints depend on the build and
+    // on the operator folder, never on the request, so the real function is
+    // bound once here.
     t = t.Funcs(template.FuncMap{
+        "asset": assetUrl,
         "T": func(messageID string, data ...any) string {
             return messageID
         },

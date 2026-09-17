@@ -9,6 +9,7 @@ import (
     "net"
     "net/http"
     "net/url"
+    "os"
     "strconv"
     "strings"
     "time"
@@ -32,6 +33,11 @@ var assetsFS embed.FS
 
 // customCssName is the one asset deliberately left out of the binary.
 const customCssName = "assets/css/custom.css"
+
+// staticPrefix is where the assets are mounted. The templates never spell it
+// out: they name an asset by its path inside the tree and let assetUrl build
+// the url, so the mount point and the fingerprint are decided in one place.
+const staticPrefix = "/static"
 
 // maxRequestBytes caps the whole request body. Pastes are posted as a comma
 // separated list of decimal bytes, so roughly four characters per byte of clear
@@ -131,12 +137,104 @@ func computeAssetETags() {
     }
 }
 
+// assetVersionBytes is how much of a fingerprint travels in an url. This is not
+// a cache validator, the ETag stays in charge of that: the token only has to
+// change when the file does, and six bytes of SHA-256 is already far more than
+// a handful of assets need.
+const assetVersionBytes = 6
+
+// assetVersions maps each asset to a short fingerprint of its content, for the
+// url where assetETags is for the header. Stamping the url is what earns an
+// asset a year of caching: a deployment changes the url, so the new bytes are
+// picked up at once rather than waited out.
+//
+// The application version would have been the obvious token, but it stays
+// "develop" outside a release and it does not move when the operator edits a
+// file of OPEN_GO_PASTE_ASSETS_FOLDER. Both cases would pin a stale asset in
+// the browsers for a year, where the content always answers for itself.
+var assetVersions = map[string]string{}
+
+// computeAssetVersions fingerprints the binary and, when there is one, the
+// operator folder. An overridden asset stays revalidated whatever its url says,
+// see assetCacheHeaders, but fingerprinting it means a restart is enough for
+// the new bytes to reach the browsers instead of waiting the max-age out.
+func computeAssetVersions() {
+    assets, err := fs.Sub(assetsFS, "assets")
+    if nil != err {
+        panic(err)
+    }
+
+    if err := fingerprintAssets(assets); nil != err {
+        // An unstamped url is simply revalidated, which is what every asset did
+        // before: trace and carry on.
+        slog.Error("fail to fingerprint the embedded assets", "err", err)
+    }
+
+    folder := config.Paste.AssetsFolder
+    if "" == folder {
+        return
+    }
+
+    if err := fingerprintAssets(os.DirFS(folder)); nil != err {
+        slog.Warn("fail to fingerprint the assets folder", "folder", folder, "err", err)
+    }
+}
+
+func fingerprintAssets(assets fs.FS) error {
+    return fs.WalkDir(assets, ".", func(path string, entry fs.DirEntry, err error) error {
+        if nil != err || entry.IsDir() {
+            return err
+        }
+
+        content, err := fs.ReadFile(assets, path)
+        if nil != err {
+            return err
+        }
+
+        sum := sha256.Sum256(content)
+        assetVersions["/"+path] = base64.RawURLEncoding.EncodeToString(sum[:assetVersionBytes])
+
+        return nil
+    })
+}
+
+// assetUrl is what the templates call instead of writing a "/static/..." path
+// by hand: it stamps the url with the fingerprint of the file it points to,
+// which is what assetCacheHeaders recognises before answering "immutable".
+//
+// An asset it does not know is returned unstamped rather than dropped: the page
+// keeps working, that url is just revalidated the way it always was.
+func assetUrl(path string) string {
+    version, known := assetVersions[path]
+    if !known {
+        return staticPrefix + path
+    }
+
+    return staticPrefix + path + "?v=" + version
+}
+
+// isCurrentAssetVersion tells whether the url carries the fingerprint of what is
+// about to be served. The token is compared rather than merely noticed: pinning
+// a year of caching on any token at all would let a shared cache be filled with
+// copies of every asset under made up urls.
+func isCurrentAssetVersion(name string, r *http.Request) bool {
+    version := r.URL.Query().Get("v")
+    if "" == version {
+        return false
+    }
+
+    expected, known := assetVersions[name]
+
+    return known && expected == version
+}
+
 // cacheControlFor answers how long a browser may keep an asset without asking
-// again. The fonts carry their version in their file name and never change
-// under it, so they are immutable; the rest is revalidated often enough for a
-// deployment to show up quickly, which the ETag turns into a 304.
-func cacheControlFor(path string) string {
-    if strings.HasPrefix(path, "/fonts/") {
+// again. An url carrying the fingerprint of its content cannot go stale, and
+// neither can a font, which carries its version in its file name: both are
+// immutable. What is left is revalidated often enough for a deployment to show
+// up quickly, which the ETag turns into a 304.
+func cacheControlFor(path string, versioned bool) string {
+    if versioned || strings.HasPrefix(path, "/fonts/") {
         return "public, max-age=31536000, immutable"
     }
 
@@ -148,15 +246,19 @@ func cacheControlFor(path string) string {
 // to answer If-None-Match, so the 304 costs nothing here.
 func assetCacheHeaders(overlay http.FileSystem, next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        name := strings.TrimPrefix(r.URL.Path, "/static")
-
-        header := w.Header()
-        header.Set("Cache-Control", cacheControlFor(name))
+        name := strings.TrimPrefix(r.URL.Path, staticPrefix)
 
         // The operator folder takes precedence over the binary, so the
         // fingerprint of an embedded file would be a lie for anything it
-        // overrides. Those keep the modification time read from the disk.
-        if etag, ok := assetETags[name]; ok && !overlayHas(overlay, name) {
+        // overrides. Those keep the modification time read from the disk, and
+        // they are never made immutable: the folder is meant to be edited
+        // without rebuilding, and a restart is not always what follows.
+        overridden := overlayHas(overlay, name)
+
+        header := w.Header()
+        header.Set("Cache-Control", cacheControlFor(name, !overridden && isCurrentAssetVersion(name, r)))
+
+        if etag, ok := assetETags[name]; ok && !overridden {
             header.Set("ETag", etag)
         }
 
@@ -181,6 +283,7 @@ func overlayHas(overlay http.FileSystem, name string) bool {
 
 func assetsDelivery(r *mux.Router) {
     computeAssetETags()
+    computeAssetVersions()
 
     overlay := assetsOverlay()
     fileSystem := overlayFileSystem{

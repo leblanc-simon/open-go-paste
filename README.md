@@ -110,6 +110,29 @@ embedded assets, file by file, which is also handy to edit the front end without
 rebuilding. The server traces a custom stylesheet that resolves to nothing at
 startup, rather than letting the page 404 on it.
 
+### Asset caching
+
+Every `/static/...` url the templates write carries a `?v=` stamp, the first
+bytes of a SHA-256 of the file it points to, computed at startup. A stamped url
+that matches what is about to be served is answered with
+`Cache-Control: public, max-age=31536000, immutable`: the browser stops asking
+about it, and a deployment is picked up at once, since changing the file changes
+the url. Anything else — an url without a stamp, or with one that is not the
+current one — keeps `max-age=300` and its `ETag`, so it is revalidated into a
+`304` within minutes.
+
+The stamp comes from the content rather than from the release: it is right in a
+`develop` build, it only moves for the file that actually changed, and it does
+not need a tag to exist. Two assets are deliberately left unstamped:
+`js/crypto.js` and `js/sanitize.js`, because `app.js` imports them relatively
+and a module url carries no query along — a stamped preload hint would point at
+an url the import never asks for.
+
+An asset overridden through `OPEN_GO_PASTE_ASSETS_FOLDER` is never made
+immutable, whatever its url says: that folder is meant to be edited without
+rebuilding, and a restart is not always what follows. It is still stamped, so a
+restart publishes the new bytes at once instead of waiting the `max-age` out.
+
 ### Internationalisation
 
 Translations live in `server/locales/<tag>.yaml`, one file per language, named
