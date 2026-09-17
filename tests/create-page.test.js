@@ -32,8 +32,8 @@ function createMarkup() {
             <div class="link-actions">
                 <button type="button" id="copy-link" aria-label="Copy the link"></button>
                 <a id="send-link" aria-label="Send the link by email"></a>
+                <span class="copy-feedback" role="status"></span>
             </div>
-            <span class="copy-feedback" role="status"></span>
         </div>
         <p id="paste-error" class="notice notice--error" role="alert" hidden></p>
         <form method="post" action="http://localhost/" name="paste">

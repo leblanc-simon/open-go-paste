@@ -181,8 +181,37 @@ main {
 
     .link-actions {
         display: flex;
+        position: relative;
         gap: 0.5rem;
         margin-inline-start: var(--default-margin-top);
+
+        /* The outcome of a copy belongs under the button that was pressed: at
+           the bottom of the block the eye had already left it. Out of flow so
+           appearing and disappearing never shifts the form below, and anchored
+           to the end of the row so a long message grows towards the inside of
+           the page rather than off screen. */
+        .copy-feedback {
+            position: absolute;
+            z-index: 1;
+            inset-block-start: calc(100% + 0.25rem);
+            /* An absolutely positioned box takes its width from its containing
+               block, and that block is two buttons wide: without max-content the
+               message came out as a 96px column of stacked words. */
+            width: max-content;
+            inset-inline-end: 0;
+            max-width: min(20rem, 70vw);
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            background-color: rgb(0 0 0 / 0.7);
+            border-radius: 0.5rem;
+
+            /* A live region stays in the page while it waits for something to
+               say, and an empty box is still a box: without this a dark
+               rectangle hangs under the buttons at all times. */
+            &:empty {
+                display: none;
+            }
+        }
     }
 
     /* The key lives in the link: losing it loses the paste, which is worth
@@ -191,14 +220,6 @@ main {
         width: 100%;
         margin-block: var(--default-margin-top) 0;
         font-size: 0.9rem;
-    }
-
-    .copy-feedback {
-        width: 100%;
-
-        &:not(:empty) {
-            margin-block-start: 0.5rem;
-        }
     }
 
     a {
